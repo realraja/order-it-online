@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+/* @theme {
+  --color-blue-1: #0E78F9;
+  --color-light-1: #DBEAFE;
+  --color-dark-1: #1C1F2E;
+  --color-dark-2: #161925;
+  --color-dark-3: #252A41;
+  --color-dark-4: #1E2757;
+} */
+
+@theme {
+  --color-red-1: #EF7299;
+
+  --color-green-1: #17AAB2;
+
+  --color-dark-1: #053458;
+
+  --color-light-1: #DBEAFE;
+--color-dark-2: #161925;
+  --color-dark-3: #252A41;
+  --color-dark-4: #1E2757;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -24,3 +47,41 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+
+.scrollEditclass::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+.scrollEditclass1::-webkit-scrollbar {
+  width: 1px;
+  height: 1px;
+}
+ 
+.scrollEditclass::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+ 
+.scrollEditclass::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+
+.scroll-wrapper:hover .scroll-arrow {
+  opacity: 1;
+}
+.scroll-arrow {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+
