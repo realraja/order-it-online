@@ -12,14 +12,14 @@ const schema = new Schema(
         "https://res.cloudinary.com/dwc3gwskl/image/upload/v1721379013/samples/ecommerce/fiiijyy4cq1nrcp7t4zz.jpg",
       required: true,
     },
-    phone: { type: Number, required: true },
-    dob: { type: Date, required: true },
+    phone: { type: Number},
+    dob: { type: Date},
 
     // Tokens
     token1: { type: String },
     token2: { type: String },
-    passwordResetToken: { type: String },
-    passwordResetTokenExp: { type: String },
+    passwordResetToken: { type: String,select: false },
+    passwordResetTokenExp: { type: Date,select: false },
 
     createdAt: { type: Date, default: Date.now },
   },
@@ -30,4 +30,9 @@ const schema = new Schema(
 
 // Prevent duplicate model registration in hot reload
 const User = mongoose.models.User || mongoose.model("User", schema);
+
+
+
+
+
 export default User;

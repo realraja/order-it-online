@@ -10,6 +10,9 @@ import { SyncLoader } from 'react-spinners';
 import DialogContext from '@/components/ui/SimpleDialogContext';
 import GoogleSignIn from '../GoogleLogin';
 import { useRouter } from 'next/navigation';
+import { LoginUser, SendResetPasswordLinkUser } from '@/utils/UserActions';
+import { useDispatch } from 'react-redux';
+import { login } from '@/redux/slicer/auth';
 
 const LoginDialog = ({ show, setShow }) => {
   const [email, setEmail] = useState('');
@@ -20,32 +23,36 @@ const LoginDialog = ({ show, setShow }) => {
   const [errors, setErrors] = useState({});
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const isValid = email && password;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = {};
-    if (!email.includes('@')) newErrors.email = 'Invalid email';
-    if (password.length < 6) newErrors.password = 'Minimum 6 characters';
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+
+    try {
       setButtonLoading(true);
-      setTimeout(() => {
-        console.log('Login submitted:', { email, password });
-        setButtonLoading(false);
-        setShow(false);
-      }, 2000);
+
+      const { data } = await LoginUser({ email, password });
+      if (data) {
+        await dispatch(login(data));
+        setShow(false); // Close the dialog on successful login
+      }
+
+
+    } catch (error) {
+      console.log('Login error:', error);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
-  const handleForgotPassword = () => {
+  const handleForgotPassword = async() => {
     setButtonLoading(true);
-    setTimeout(() => {
-      alert(`Reset link sent to ${email}`);
-      setButtonLoading(false);
-      setShowForgotPassword(false);
-    }, 1500);
+    await SendResetPasswordLinkUser({email});
+    setButtonLoading(false);
+    setShowForgotPassword(false);
+    setShow(false)
   };
 
   return (
@@ -138,11 +145,10 @@ const LoginDialog = ({ show, setShow }) => {
                     disabled={!isValid || buttonLoading}
                     whileHover={isValid && !buttonLoading ? { scale: 1.02 } : {}}
                     whileTap={isValid && !buttonLoading ? { scale: 0.98 } : {}}
-                    className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${
-                      isValid && !buttonLoading
+                    className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${isValid && !buttonLoading
                         ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-lg hover:shadow-purple-500/30 text-white'
                         : 'dark:bg-gray-700 bg-gray-300 cursor-not-allowed dark:text-gray-400 text-gray-600'
-                    }`}
+                      }`}
                   >
                     {buttonLoading ? <SyncLoader color={isValid ? "#ffffff" : "#6b7280"} size={8} /> : <>Login <FiArrowRight /></>}
                   </motion.button>
@@ -158,7 +164,7 @@ const LoginDialog = ({ show, setShow }) => {
 
                 <p className="text-center dark:text-gray-400 text-gray-600">
                   Don't have an account?{' '}
-                  <span onClick={() => {router.push('/register'); setShow(false);}}  className="cursor-pointer text-purple-400 hover:underline font-medium">
+                  <span onClick={() => { router.push('/register'); setShow(false); }} className="cursor-pointer text-purple-400 hover:underline font-medium">
                     Register
                   </span>
                 </p>
@@ -310,7 +316,7 @@ export default LoginDialog;
 //               <motion.h2 className="text-3xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
 //                 {showForgotPassword ? 'Reset Password' : 'Welcome Back'}
 //               </motion.h2>
-//               <motion.p 
+//               <motion.p
 //                 className="text-gray-400 mt-2"
 //                 initial={{ opacity: 0 }}
 //                 animate={{ opacity: 1 }}
@@ -349,9 +355,9 @@ export default LoginDialog;
 //                         />
 //                       </div>
 //                       {errors.email && (
-//                         <motion.p 
-//                           initial={{ opacity: 0, y: -5 }} 
-//                           animate={{ opacity: 1, y: 0 }} 
+//                         <motion.p
+//                           initial={{ opacity: 0, y: -5 }}
+//                           animate={{ opacity: 1, y: 0 }}
 //                           className="text-sm text-red-400 mt-1"
 //                         >
 //                           {errors.email}
@@ -374,18 +380,18 @@ export default LoginDialog;
 //                           onChange={(e) => setPassword(e.target.value)}
 //                           className="w-full bg-transparent focus:outline-none placeholder-gray-500"
 //                         />
-//                         <button 
-//                           type="button" 
-//                           onClick={() => setShowPassword(!showPassword)} 
+//                         <button
+//                           type="button"
+//                           onClick={() => setShowPassword(!showPassword)}
 //                           className="text-gray-400 hover:text-white transition-colors"
 //                         >
 //                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
 //                         </button>
 //                       </div>
 //                       {errors.password && (
-//                         <motion.p 
-//                           initial={{ opacity: 0, y: -5 }} 
-//                           animate={{ opacity: 1, y: 0 }} 
+//                         <motion.p
+//                           initial={{ opacity: 0, y: -5 }}
+//                           animate={{ opacity: 1, y: 0 }}
 //                           className="text-sm text-red-400 mt-1"
 //                         >
 //                           {errors.password}
@@ -400,9 +406,9 @@ export default LoginDialog;
 //                       transition={{ delay: 0.6 }}
 //                       className="flex justify-end"
 //                     >
-//                       <button 
-//                         type="button" 
-//                         onClick={() => setShowForgotPassword(true)} 
+//                       <button
+//                         type="button"
+//                         onClick={() => setShowForgotPassword(true)}
 //                         className="text-sm text-purple-400 hover:underline transition-colors"
 //                       >
 //                         Forgot password?
@@ -463,8 +469,8 @@ export default LoginDialog;
 //                     className="text-center text-gray-400"
 //                   >
 //                     Don't have an account?{' '}
-//                     <Link 
-//                       href="/register" 
+//                     <Link
+//                       href="/register"
 //                       className="text-purple-400 hover:underline font-medium transition-colors"
 //                     >
 //                       Register

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 
 const DialogContext = ({
   Icon,
@@ -15,30 +15,22 @@ const DialogContext = ({
   isLoading = false,
   closeOnOutsideClick = true
 }) => {
-  const [isClosing, setIsClosing] = useState(false);
   const dialogRef = useRef(null);
 
   const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowDialog(false);
-      setIsClosing(false);
-    }, 300);
+    setShowDialog(false);
   };
 
-  const handleSubmit = async () => {
-    try {
-      await onSubmit();
-    } finally {
-      handleClose();
-    }
+  const handleSubmit = () => {
+    onSubmit();
+    // setShowDialog(false);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (closeOnOutsideClick && 
-          dialogRef.current && 
-          !dialogRef.current.contains(event.target)) {
+      if (closeOnOutsideClick &&
+        dialogRef.current &&
+        !dialogRef.current.contains(event.target)) {
         handleClose();
       }
     };
@@ -65,21 +57,21 @@ const DialogContext = ({
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-auto">
             <motion.div
               ref={dialogRef}
-              className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-auto scrollEditclass h-full"
+              className="w-full max-w-md bg-white dark:bg-gray-900 text-black dark:text-white rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-auto scrollEditclass max-h-full"
               initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ 
-                opacity: 1, 
+              animate={{
+                opacity: 1,
                 scale: 1,
-                transition: { 
-                  type: "spring", 
-                  stiffness: 500, 
-                  damping: 30 
-                } 
+                transition: {
+                  type: "spring",
+                  stiffness: 500,
+                  damping: 30
+                }
               }}
-              exit={{ 
-                opacity: 0, 
+              exit={{
+                opacity: 0,
                 scale: 0.95,
-                transition: { duration: 0.2 } 
+                transition: { duration: 0.2 }
               }}
             >
               <div className="p-6">
@@ -94,8 +86,8 @@ const DialogContext = ({
                       {title}
                     </h2>
                   )}
-                  <button 
-                    onClick={handleClose} 
+                  <button
+                    onClick={handleClose}
                     className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
                     <X size={18} />
@@ -114,7 +106,7 @@ const DialogContext = ({
                     Cancel
                   </button>
                   <button
-                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 rounded-lg transition-colors flex items-center justify-center min-w-[100px]"
+                    className="px-4 py-2 text-sm font-medium text-white cursor-pointer bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 rounded-lg transition-colors flex items-center justify-center min-w-[100px]"
                     onClick={handleSubmit}
                     disabled={isLoading}
                   >

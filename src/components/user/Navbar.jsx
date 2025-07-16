@@ -6,8 +6,16 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { FiShoppingCart, FiSearch, FiUser, FiSettings, FiLogOut } from "react-icons/fi";
 import LoginDialog from "../user/dialog/LoginDialog";
+import { useDispatch, useSelector } from "react-redux";
+import DialogContext from "../ui/DailogContext";
+import { logoutUser } from "@/utils/UserActions";
+import { logout } from "@/redux/slicer/auth";
 
 const Navbar = () => {
+
+  const { userData, isUser } = useSelector((state) => state.auth);
+  // console.log(userData);
+
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const [isLoginDialog, setIsLoginDialog] = useState(false);
@@ -15,6 +23,8 @@ const Navbar = () => {
   const searchRef = useRef(null);
   const accountRef = useRef(null);
   const accountMenuRef = useRef(null);
+
+
 
   // Focus the search input when isSearchActive becomes true
   useEffect(() => {
@@ -29,6 +39,7 @@ const Navbar = () => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setIsSearchActive(false);
       }
+
       if (
         accountRef.current &&
         !accountRef.current.contains(event.target) &&
@@ -82,17 +93,16 @@ const Navbar = () => {
                 <div className="relative">
                   <div
                     ref={accountRef}
-                    // onMouseEnter={() => setIsAccountMenuOpen(true)}
-                    onClick={() => setIsLoginDialog(true)}
+                    onMouseEnter={() => { isUser && setIsAccountMenuOpen(true) }}
+                    onClick={() => { !isUser && setIsLoginDialog(true) }}
                   >
                     <button className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                       <FiUser className="text-gray-700 dark:text-gray-300" />
                     </button>
                   </div>
 
-                  {isAccountMenuOpen && (
-                    <DropdownMenu accountMenuRef={accountMenuRef} setIsAccountMenuOpen={setIsAccountMenuOpen} />
-                  )}
+                  <DropdownMenu image={userData.imgUrl} name={userData.name} accountMenuRef={accountMenuRef} setIsAccountMenuOpen={setIsAccountMenuOpen} isAccountMenuOpen={isAccountMenuOpen} />
+
                 </div>
 
                 {/* Cart */}
@@ -109,7 +119,7 @@ const Navbar = () => {
       </div>
 
       {
-        isLoginDialog && <LoginDialog show={isLoginDialog} setShow={setIsLoginDialog} />
+        isLoginDialog && !isUser && <LoginDialog show={isLoginDialog} setShow={setIsLoginDialog} />
       }
     </nav>
   );
@@ -132,45 +142,69 @@ const SearchItemComponent = ({ searchRef }) => {
 };
 
 
-const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen }) => {
+const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen,image, name, isAccountMenuOpen }) => {
+  const [isLogoutDialog, setIsLogoutDialog] = useState(false);
+  const [isLogOutLoading, setIsLogOutLoading] = useState(false);
+  const dispatch = useDispatch();
 
+  const handleLogout = async () => {
+    setIsLogOutLoading(true);
+    await logoutUser();
+    await dispatch(logout());
+    setIsLogOutLoading(false);
+    setIsLogoutDialog(false);
+  }
   return (
-    <div
-      ref={accountMenuRef}
-      className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden z-50 border border-gray-100 dark:border-gray-700"
-      onMouseEnter={() => setIsAccountMenuOpen(true)}
-      onMouseLeave={() => setIsAccountMenuOpen(false)}
-    >
-      <div className="py-1">
-        {/* User info section */}
-        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-          <p className="text-sm font-medium text-gray-900 dark:text-white">Welcome back</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">user@example.com</p>
+    <>
+      <div
+        ref={accountMenuRef}
+        className={`${!isAccountMenuOpen && 'hidden'} absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden z-50 border border-gray-100 dark:border-gray-700`}
+        onMouseEnter={() => setIsAccountMenuOpen(true)}
+        onMouseLeave={() => setIsAccountMenuOpen(false)}
+      >
+        <div className="py-1">
+          {/* User info section */}
+          <div className="flex gap-3 items-center px-2">
+            <img src={image} className="size-8 rounded-full" alt="userImage" />
+
+          <div className=" py-3 border-b border-gray-100 dark:border-gray-700">
+            <p className="text-sm font-medium text-gray-900 dark:text-white">Welcome back</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{name}</p>
+          </div>
+          </div>
+
+          {/* Menu items with icons */}
+          <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <FiUser className="w-5 h-5 mr-3 text-gray-400" />
+            Account Settings
+          </button>
+
+          <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <FiSettings className="w-5 h-5 mr-3 text-gray-400" />
+            Preferences
+          </button>
+
+          <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <ListOrdered className="w-5 h-5 mr-3 text-gray-400" />
+            Orders
+          </button>
+
+          <div className="border-t border-gray-100 dark:border-gray-700"></div>
+
+          <button onClick={() => setIsLogoutDialog(true)} className="flex cursor-pointer items-center w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <FiLogOut className="w-5 h-5 mr-3" />
+            Sign Out
+          </button>
         </div>
 
-        {/* Menu items with icons */}
-        <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-          <FiUser className="w-5 h-5 mr-3 text-gray-400" />
-          Account Settings
-        </button>
-
-        <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-          <FiSettings className="w-5 h-5 mr-3 text-gray-400" />
-          Preferences
-        </button>
-
-        <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-          <ListOrdered className="w-5 h-5 mr-3 text-gray-400" />
-          Orders
-        </button>
-
-        <div className="border-t border-gray-100 dark:border-gray-700"></div>
-
-        <button className="flex items-center w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-          <FiLogOut className="w-5 h-5 mr-3" />
-          Sign Out
-        </button>
       </div>
-    </div>
+      {
+        isLogoutDialog && <DialogContext showDialog={isLogoutDialog} setShowDialog={setIsLogoutDialog} title="Logout" submitText="LogOut" onSubmit={handleLogout} isLoading={isLogOutLoading} Icon={FiLogOut}  >
+
+          <p className="">Are you sure you want to logout?</p>
+
+        </DialogContext>
+      }
+    </>
   )
 } 

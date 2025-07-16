@@ -2,16 +2,21 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FcAddImage } from 'react-icons/fc';
-import { FiUser, FiMail, FiLock, FiCalendar, FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi';
-import toast from 'react-hot-toast';
+import { FiUser, FiMail, FiLock, FiCalendar, FiEye, FiEyeOff, FiArrowRight, FiPhone } from 'react-icons/fi';
 import { SyncLoader } from 'react-spinners';
 import GoogleSignIn from '@/components/user/GoogleLogin';
 import LoginDialog from '@/components/user/dialog/LoginDialog';
+import { RegisterUser } from '@/utils/UserActions';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '@/redux/slicer/auth';
+import { useRouter } from 'next/navigation';
 
 export default function Register() {
   const [image, setImage] = useState(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [dob, setDob] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +24,19 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(false);
   const [isLoginDialog, setIsLoginDialog] = useState(false);
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const {isUser} = useSelector((state) => state.auth);
+  console.log(isUser);
+
+
+  useEffect(() => {
+    if(isUser) router.push('/'); // Redirect to home if user is already logged in
+  }, [])
+
+
 
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
@@ -37,6 +55,10 @@ export default function Register() {
     const newErrors = {};
     if (!name.trim()) newErrors.name = 'Name is required';
     else if (name.length < 3) newErrors.name = 'Name must be at least 3 characters';
+
+    if (phone.length !== 10) {
+      newErrors.phone = 'Invalid Phone Number';
+    }
 
     if (!dob) {
       newErrors.dob = 'Date of birth is required';
@@ -72,12 +94,27 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValid) return;
-    console.log({ image, name, email, password, dob });
+
+    try {
+      setButtonLoading(true);
+
+      const {data} = await RegisterUser({ image, name, email, phone, password, dob });
+      if(data) {
+        await dispatch(login(data));
+        router.push('/'); // Redirect to home page after successful registration
+      }
+
+
+    } catch (error) {
+      console.log('Registration error:', error);
+    } finally {
+      setButtonLoading(false);
+    }
   };
 
   useEffect(() => {
     validate();
-  }, [name, email, password, dob]);
+  }, [name, email, password, dob, phone]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
@@ -140,6 +177,7 @@ export default function Register() {
           <InputField icon={<FiUser />} value={name} setValue={setName} placeholder="Full Name" error={errors.name} />
           {/* Email */}
           <InputField icon={<FiMail />} value={email} setValue={setEmail} placeholder="Email" error={errors.email} type="email" />
+          <InputField icon={<FiPhone />} value={phone} setValue={setPhone} placeholder="Phone NO" error={errors.phone} type="number" />
           {/* Password */}
           <PasswordField value={password} setValue={setPassword} error={errors.password} show={showPassword} setShow={setShowPassword} />
           {/* Date of Birth */}
@@ -151,11 +189,10 @@ export default function Register() {
             disabled={!isValid || buttonLoading}
             whileHover={isValid && !buttonLoading ? { scale: 1.02 } : {}}
             whileTap={isValid && !buttonLoading ? { scale: 0.98 } : {}}
-            className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${
-              isValid && !buttonLoading
+            className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${isValid && !buttonLoading
                 ? 'bg-gradient-to-r from-green-1 to-pink-600 hover:shadow-lg text-white'
                 : 'bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
-            }`}
+              }`}
           >
             {buttonLoading ? <SyncLoader color="#fff" size={8} /> : <>Register <FiArrowRight /></>}
           </motion.button>
@@ -179,7 +216,7 @@ export default function Register() {
           </span>
         </p>
       </motion.div>
-      {isLoginDialog &&  <LoginDialog show={isLoginDialog} setShow={setIsLoginDialog} />}
+      {isLoginDialog && <LoginDialog show={isLoginDialog} setShow={setIsLoginDialog} />}
     </div>
   );
 }
@@ -213,7 +250,7 @@ const InputField = ({ icon, value, setValue, placeholder, type = "text", error }
 const PasswordField = ({ value, setValue, error, show, setShow }) => (
   <div>
     <motion.div
-      className="flex items-center bg-gray-100 dark:bg-gray-800 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus-within:ring-2 focus-within:ring-green-1"
+      className="flex items-center bg-gray-100 dark:bg-gray-800 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus-within:ring-1 focus-within:ring-green-1"
       whileFocus={{ scale: 1.01 }}
     >
       <FiLock className="text-gray-400 mr-2" />
@@ -236,7 +273,7 @@ const PasswordField = ({ value, setValue, error, show, setShow }) => (
       )}
     </AnimatePresence>
 
-       
-      
+
+
   </div>
 );

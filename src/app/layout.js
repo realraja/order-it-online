@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
+import StoreProvider from "@/redux/storeProvider";
+import ToastContext from "@/components/ui/ToastContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,10 +25,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-light-1 dark:bg-dark-1 dark:text-white `}
       >
-        
-    <ThemeProvider attribute="class">
-        {children}
-        </ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider attribute="class">
+            <ToastContext />
+            {children}
+          </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );
