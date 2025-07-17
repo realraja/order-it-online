@@ -1,12 +1,23 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiLock, FiCheck, FiX, FiLoader } from "react-icons/fi";
 import { ResetPasswordUser } from "@/utils/UserActions";
 import { toast } from "react-toastify";
+import ResetPasswordSuspenseLoader from "@/components/user/loaders/resetPasswordSuspenseLoader";
 
 export default function PasswordResetPage() {
+  return (
+    <Suspense fallback={<ResetPasswordSuspenseLoader />}>
+      <PasswordResetComponent />
+    </Suspense>
+  );
+}
+
+
+
+function PasswordResetComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -126,9 +137,8 @@ export default function PasswordResetPage() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className={`text-sm mt-1 ${
-                    passwordsMatch ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
-                  }`}
+                  className={`text-sm mt-1 ${passwordsMatch ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                    }`}
                 >
                   {passwordsMatch ? "Passwords match!" : "Passwords do not match"}
                 </motion.p>
@@ -161,10 +171,9 @@ export default function PasswordResetPage() {
             whileHover={isFormValid ? { scale: 1.02 } : {}}
             whileTap={isFormValid ? { scale: 0.98 } : {}}
             className={`w-full py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center
-              ${
-                isFormValid && !isSubmitting
-                  ? "text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/30"
-                  : "bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed"
+              ${isFormValid && !isSubmitting
+                ? "text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/30"
+                : "bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed"
               }`}
           >
             {isSubmitting ? (
