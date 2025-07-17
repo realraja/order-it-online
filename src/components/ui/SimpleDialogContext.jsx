@@ -4,18 +4,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import {  useRef, useEffect } from "react";
 
-const DialogContext = ({
+const DialogContextSimple = ({
   showDialog,
-  setShowDialog,
+  onClose,
   children,
   closeOnOutsideClick = true
 }) => {
   const dialogRef = useRef(null);
 
   const handleClose = () => {
-    setTimeout(() => {
-      setShowDialog(false);
-    }, 300);
+    onClose();
   };
 
 
@@ -91,4 +89,4 @@ const DialogContext = ({
   );
 };
 
-export default DialogContext;
+export default DialogContextSimple;

@@ -199,7 +199,7 @@ const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen,image, name, isAcco
 
       </div>
       {
-        isLogoutDialog && <DialogContext showDialog={isLogoutDialog} setShowDialog={setIsLogoutDialog} title="Logout" submitText="LogOut" onSubmit={handleLogout} isLoading={isLogOutLoading} Icon={FiLogOut}  >
+        isLogoutDialog && <DialogContext showDialog={isLogoutDialog} onClose={()=> setIsLogoutDialog()} title="Logout" submitText="LogOut" onSubmit={handleLogout} isLoading={isLogOutLoading} Icon={FiLogOut}  >
 
           <p className="">Are you sure you want to logout?</p>
 

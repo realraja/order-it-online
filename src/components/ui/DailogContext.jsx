@@ -8,8 +8,8 @@ const DialogContext = ({
   Icon,
   title,
   showDialog,
-  setShowDialog,
   onSubmit,
+  onClose,
   children,
   submitText = "Submit",
   isLoading = false,
@@ -17,9 +17,7 @@ const DialogContext = ({
 }) => {
   const dialogRef = useRef(null);
 
-  const handleClose = () => {
-    setShowDialog(false);
-  };
+  const handleClose = () => onClose();
 
   const handleSubmit = () => {
     onSubmit();

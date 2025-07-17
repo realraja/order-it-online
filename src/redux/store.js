@@ -1,5 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authSlicer from "./slicer/auth";
+import miscSlicer from "./slicer/misc";
+import adminSlicer from "./slicer/admin";
+import adminApi from "./api/admin";
 // import chatSlicer from "./slicer/chat";
 // import api from "./api/api";
 
@@ -7,10 +10,11 @@ import authSlicer from "./slicer/auth";
 const store = configureStore({
     reducer: {
         [authSlicer.name] : authSlicer.reducer,
-        // [chatSlicer.name] : chatSlicer.reducer,
-        // [api.reducerPath] : api.reducer,
+        [miscSlicer.name] : miscSlicer.reducer,
+        [adminSlicer.name] : adminSlicer.reducer,
+        [adminApi.reducerPath]: adminApi.reducer,
     },
-    // middleware:(defaultMiddleware)=>[...defaultMiddleware(),api.middleware],
+    middleware:(getDefaultMiddleware)=> getDefaultMiddleware().concat(adminApi.middleware),
 })
 
 export default store; 

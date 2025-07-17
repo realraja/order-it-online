@@ -1,6 +1,5 @@
 import connectDB from "@/database/connectDB";
 import { failedResponse, ResponseFailed, ResponseFailedError } from "./response";
-import { cookies } from "next/headers";
 import { verifyToken } from "./jwt";
 import User from "@/model/user";
 
@@ -42,6 +41,37 @@ export const UserTryCatch = (passedFunction) => async (req, context) => {
     // console.log(email);
     req.user = user;
     req.id = user._id;
+
+    return await passedFunction(req, context); // <== forward context (e.g. { params })
+  } catch (error) {
+    console.log("try catch error: " + error);
+    return ResponseFailedError("Internal Server Error", error.message);
+  }
+};
+
+export const AdminTryCatch = (passedFunction) => async (req, context) => {
+  try {
+    const token = req.cookies.get("adminToken")?.value;
+    if (!token) {
+      return ResponseFailed("Please Login First", "token not found");
+    }
+    const {username,password} = verifyToken(token);
+
+ 
+
+
+    if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
+      const res =  failedResponse('cookie not match');
+      res.cookies.set("adminToken", "", {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(0),
+        path: "/",
+      });
+      return res;
+    }
+
+    await connectDB()
 
     return await passedFunction(req, context); // <== forward context (e.g. { params })
   } catch (error) {

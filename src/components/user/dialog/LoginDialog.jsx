@@ -7,7 +7,7 @@ import { FiMail, FiArrowRight, FiLoader } from 'react-icons/fi';
 import { FcLock } from 'react-icons/fc';
 import { SyncLoader } from 'react-spinners';
 // import Link from 'next/link';
-import DialogContext from '@/components/ui/SimpleDialogContext';
+import DialogContextSimple from '@/components/ui/SimpleDialogContext';
 import GoogleSignIn from '../GoogleLogin';
 import { useRouter } from 'next/navigation';
 import { LoginUser, SendResetPasswordLinkUser } from '@/utils/UserActions';
@@ -56,7 +56,7 @@ const LoginDialog = ({ show, setShow }) => {
   };
 
   return (
-    <DialogContext showDialog={show} setShowDialog={setShow}>
+    <DialogContextSimple showDialog={show} handleClose={()=> setShow(false)}>
       <div className="flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -228,7 +228,7 @@ const LoginDialog = ({ show, setShow }) => {
           </AnimatePresence>
         </motion.div>
       </div>
-    </DialogContext>
+    </DialogContextSimple>
   );
 };
 

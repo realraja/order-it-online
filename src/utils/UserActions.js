@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export const userTryCatch = (passedFunction) => async (data) => {
+const userTryCatch = (passedFunction) => async (data) => {
   try {
     return await passedFunction(data);
   } catch (error) {
