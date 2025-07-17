@@ -25,8 +25,9 @@ export const useAsyncMutation = (mutationHook) => {
         });
         setData(res.data);
       } else {
+        console.log(res)
         toast.update(toastId, {
-          render: res?.error?.data?.message || 'Update failed!',
+          render: res?.error?.data?.error ?res?.error?.data?.error: res?.error?.data?.message  ? res?.error?.data?.message : 'Update failed!',
           type: 'error',
           isLoading: false,
           autoClose: 3000,

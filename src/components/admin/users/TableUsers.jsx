@@ -15,10 +15,10 @@ export default function TableUsers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'descending' });
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
   const [users, setUsers] = useState([]);
   const [deleteUserDialog, setDeleteUserDialog] = useState({ show: false, id: null });
   const [showUserInfo, setShowUserInfo] = useState({ show: false, data: {} })
+  const [usersPerPage, setUsersPerPage] = useState(10)
 
   const { data, isLoading } = useGetUserDataQuery();
   const [deleteUser] = useAsyncMutation(useDeleteUserMutation);
@@ -170,6 +170,9 @@ export default function TableUsers() {
           Showing {indexOfFirstUser + 1} to{' '}
           {Math.min(indexOfLastUser, filteredUsers.length)} of{' '}
           {filteredUsers.length} users
+        </div>
+        <div>
+          <input type="number" value={usersPerPage} onChange={(e) => setUsersPerPage(e.target.value)} />
         </div>
         <div className="flex space-x-2">
           <button
