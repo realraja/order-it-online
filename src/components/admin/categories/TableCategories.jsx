@@ -11,6 +11,7 @@ import {
 import { useGetCategoryQuery } from "@/redux/api/admin";
 import UsersTableLoader from "../loaders/userTableLoader";
 import AddUpdateDeleteDialog from "./AddUpdateDeleteDialog";
+import Image from "next/image";
 
 export default function TableCategories() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -120,7 +121,7 @@ export default function TableCategories() {
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                   Image
                 </th>
-                
+
                 <th
                   onClick={() => requestSort("name")}
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -130,7 +131,7 @@ export default function TableCategories() {
                     <SortIndicator columnKey="name" />
                   </div>
                 </th>
-                
+
                 <th
                   onClick={() => requestSort("slug")}
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -140,7 +141,7 @@ export default function TableCategories() {
                     <SortIndicator columnKey="slug" />
                   </div>
                 </th>
-                
+
                 <th
                   onClick={() => requestSort("products")}
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -150,7 +151,7 @@ export default function TableCategories() {
                     <SortIndicator columnKey="products" />
                   </div>
                 </th>
-                
+
                 <th
                   onClick={() => requestSort("status")}
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -160,7 +161,7 @@ export default function TableCategories() {
                     <SortIndicator columnKey="status" />
                   </div>
                 </th>
-                
+
                 <th
                   onClick={() => requestSort("createdAt")}
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -170,7 +171,7 @@ export default function TableCategories() {
                     <SortIndicator columnKey="createdAt" />
                   </div>
                 </th>
-                
+
                 <th className="relative px-6 py-3">
                   <span className="sr-only">Actions</span>
                 </th>
@@ -181,7 +182,9 @@ export default function TableCategories() {
                 <tr key={category._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <td className="whitespace-nowrap px-6 py-4">
                     {category.image ? (
-                      <img src={category.image} alt={category.name} className="h-10 w-10 rounded-md object-cover" />
+                      <Image
+                        height={50}
+                        width={50} src={category.image} alt={category.name} className="h-10 w-10 rounded-md object-cover" />
                     ) : (
                       <div className="flex h-10 w-10 items-center justify-center rounded-md bg-gray-100 text-gray-400 dark:bg-gray-600">
                         <ImageIcon className="h-5 w-5" />

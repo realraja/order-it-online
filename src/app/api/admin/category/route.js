@@ -3,11 +3,24 @@ import { uploadResponse } from "@/middleware/cloudinary";
 import { failedResponse, ResponseSuccess } from "@/middleware/response";
 import { AdminTryCatch } from "@/middleware/TryCatch";
 import Category from "@/model/category";
+import Product from "@/model/product";
 
 export const GET = AdminTryCatch(async (req) => {
-  const category = await Category.find().sort({ createdAt: -1 });
+  // Fetch categories sorted by newest first
+  const categories = await Category.find().sort({ createdAt: -1 });
 
-  return ResponseSuccess("All users Fetched successfully!", category);
+  // Get product counts for each category (parallel optimization)
+  const categoriesWithCounts = await Promise.all(
+    categories.map(async (cat) => {
+      const productCount = await Product.countDocuments({ category: cat._id });
+      return {
+        ...cat.toObject(), // Convert Mongoose doc to plain object
+        products: productCount,
+      };
+    })
+  );
+
+  return ResponseSuccess("Categories fetched successfully!", categoriesWithCounts);
 });
 
 export const POST = AdminTryCatch(async (req) => {

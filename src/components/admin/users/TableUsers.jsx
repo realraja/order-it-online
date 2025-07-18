@@ -1,7 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { Trash2, ChevronUp, ChevronDown, Search, Eye ,Copy, Phone, ShoppingCart, CalendarPlus, CalendarDays, 
-  Mail, UserRound, MessageSquareText, X} from 'lucide-react';
+import {
+  Trash2, ChevronUp, ChevronDown, Search, Eye, Copy, Phone, ShoppingCart, CalendarPlus, CalendarDays,
+  Mail, UserRound, MessageSquareText, X
+} from 'lucide-react';
 import { useDeleteUserMutation, useGetUserDataQuery } from '@/redux/api/admin';
 import moment from 'moment';
 import { useAsyncMutation } from '@/hook/mutationHook';
@@ -10,6 +12,7 @@ import { FiUser } from 'react-icons/fi';
 import UsersTableLoader from '../loaders/userTableLoader';
 import DialogContextSimple from '@/components/ui/SimpleDialogContext';
 import { toast } from 'react-toastify';
+import Image from 'next/image';
 
 export default function TableUsers() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -130,10 +133,12 @@ export default function TableUsers() {
               <tr key={user._id}>
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center">
-                    <img
+                    <Image
+                      height={50}
+                      width={50}
                       className="h-10 w-10 rounded-full"
                       src={user.imgUrl}
-                      alt=""
+                      alt={user.name}
                     />
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</div>
@@ -203,93 +208,95 @@ export default function TableUsers() {
       }
       {/*  user info dialog */}
       {
-        deleteUserDialog && <DialogContextSimple 
-  showDialog={showUserInfo.show} 
-  onClose={() => setShowUserInfo({ show: false, data: {} })}
-  overlayClassName="backdrop-blur-sm"
->
-  {showUserInfo?.data && (
-    <div className="p-0 max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 ease-in-out">
-      {/* Profile Header with Gradient Background */}
-      <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 p-6 pt-12 pb-8">
-        <div className="absolute -bottom-6 left-6">
-          <div className="relative group">
-            <img
-              src={showUserInfo.data.imgUrl}
-              alt={showUserInfo.data.name}
-              className="w-20 h-20 rounded-full border-4 border-white dark:border-gray-800 object-cover shadow-lg transition-transform duration-300 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-white/30 transition-all duration-300" />
-          </div>
-        </div>
-        <div className="ml-28 mt-2 space-y-1">
-          <div className="flex items-center gap-2">
-            <UserRound className="h-4 w-4 text-blue-100" />
-            <h2 className="text-xl font-bold text-white capitalize">{showUserInfo.data.name}</h2>
-          </div>
-          <div className="flex items-center gap-2">
-            <Mail className="h-4 w-4 text-blue-100" />
-            <p onClick={() => {navigator.clipboard.writeText(showUserInfo.data.email); toast('Copied!');}} className="text-blue-100 text-sm cursor-pointer hover:text-blue-400">{showUserInfo.data.email}  </p>
-          </div>
-        </div>
-      </div>
+        deleteUserDialog && <DialogContextSimple
+          showDialog={showUserInfo.show}
+          onClose={() => setShowUserInfo({ show: false, data: {} })}
+          overlayClassName="backdrop-blur-sm"
+        >
+          {showUserInfo?.data && (
+            <div className="p-0 max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 ease-in-out">
+              {/* Profile Header with Gradient Background */}
+              <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 p-6 pt-12 pb-8">
+                <div className="absolute -bottom-6 left-6">
+                  <div className="relative group">
+                    <Image
+                      height={50}
+                      width={50}
+                      src={showUserInfo.data.imgUrl}
+                      alt={showUserInfo.data.name}
+                      className="w-20 h-20 rounded-full border-4 border-white dark:border-gray-800 object-cover shadow-lg transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-white/30 transition-all duration-300" />
+                  </div>
+                </div>
+                <div className="ml-28 mt-2 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <UserRound className="h-4 w-4 text-blue-100" />
+                    <h2 className="text-xl font-bold text-white capitalize">{showUserInfo.data.name}</h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-blue-100" />
+                    <p onClick={() => { navigator.clipboard.writeText(showUserInfo.data.email); toast('Copied!'); }} className="text-blue-100 text-sm cursor-pointer hover:text-blue-400">{showUserInfo.data.email}  </p>
+                  </div>
+                </div>
+              </div>
 
-      {/* Content Area */}
-      <div className="mt-8 space-y-5 p-6">
-        {/* User ID Section */}
-        <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-          <div className="flex justify-between items-center">
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User ID</p>
-            <button 
-              onClick={() => {navigator.clipboard.writeText(showUserInfo.data._id); toast('Copied!');}}
-              className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-1"
-              title="Copy to clipboard"
-            >
-              <Copy className="h-3 w-3" />
-              <span className="text-xs">Copy</span>
-            </button>
-          </div>
-          <p className="mt-1 text-sm font-mono break-all dark:text-gray-200">{showUserInfo.data._id}</p>
-        </div>
+              {/* Content Area */}
+              <div className="mt-8 space-y-5 p-6">
+                {/* User ID Section */}
+                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User ID</p>
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(showUserInfo.data._id); toast('Copied!'); }}
+                      className="text-gray-400 hover:text-blue-500 transition-colors flex items-center gap-1"
+                      title="Copy to clipboard"
+                    >
+                      <Copy className="h-3 w-3" />
+                      <span className="text-xs">Copy</span>
+                    </button>
+                  </div>
+                  <p className="mt-1 text-sm font-mono break-all dark:text-gray-200">{showUserInfo.data._id}</p>
+                </div>
 
-        {/* Grid Info Section */}
-        <div className="grid grid-cols-2 gap-4">
-          <InfoCard 
-            label="Phone" 
-            value={showUserInfo.data.phone ?? "N/A"} 
-            icon={<Phone className="h-4 w-4" />} 
-          />
-          <InfoCard 
-            label="Cart Items" 
-            value={showUserInfo.data.cartItems?.length || 0} 
-            icon={<ShoppingCart className="h-4 w-4" />} 
-          />
-          <InfoCard 
-            label="Created" 
-            value={moment(showUserInfo.data.createdAt).fromNow()} 
-            icon={<CalendarPlus className="h-4 w-4" />} 
-          />
-          <InfoCard 
-            label="Updated" 
-            value={moment(showUserInfo.data.updatedAt).fromNow()} 
-            icon={<CalendarDays className="h-4 w-4" />} 
-          />
-        </div>
+                {/* Grid Info Section */}
+                <div className="grid grid-cols-2 gap-4">
+                  <InfoCard
+                    label="Phone"
+                    value={showUserInfo.data.phone ?? "N/A"}
+                    icon={<Phone className="h-4 w-4" />}
+                  />
+                  <InfoCard
+                    label="Cart Items"
+                    value={showUserInfo.data.cartItems?.length || 0}
+                    icon={<ShoppingCart className="h-4 w-4" />}
+                  />
+                  <InfoCard
+                    label="Created"
+                    value={moment(showUserInfo.data.createdAt).fromNow()}
+                    icon={<CalendarPlus className="h-4 w-4" />}
+                  />
+                  <InfoCard
+                    label="Updated"
+                    value={moment(showUserInfo.data.updatedAt).fromNow()}
+                    icon={<CalendarDays className="h-4 w-4" />}
+                  />
+                </div>
 
-        {/* Additional Actions */}
-        <div className="flex justify-end space-x-3 pt-2">
-          <button
-            onClick={() => setShowUserInfo({ show: false, data: {} })}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
-          >
-            <X className="h-4 w-4" />
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  )}
-</DialogContextSimple>
+                {/* Additional Actions */}
+                <div className="flex justify-end space-x-3 pt-2">
+                  <button
+                    onClick={() => setShowUserInfo({ show: false, data: {} })}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
+                  >
+                    <X className="h-4 w-4" />
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContextSimple>
 
       }
     </div>
