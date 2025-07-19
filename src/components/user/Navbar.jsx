@@ -9,20 +9,28 @@ import LoginDialog from "../user/dialog/LoginDialog";
 import { useDispatch, useSelector } from "react-redux";
 import DialogContext from "../ui/DailogContext";
 import { logoutUser } from "@/utils/UserActions";
-import { logout } from "@/redux/slicer/auth";
+import { logout, setIsLoginDialog } from "@/redux/slicer/auth";
+import { useLazyGetUserAllProductBySearchQuery } from "@/redux/api/user";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
 
-  const { userData, isUser } = useSelector((state) => state.auth);
+  const { userData, isUser ,isLoginDialog,cart} = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   // console.log(userData);
 
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
-  const [isLoginDialog, setIsLoginDialog] = useState(false);
 
   const searchRef = useRef(null);
   const accountRef = useRef(null);
   const accountMenuRef = useRef(null);
+
+  const [hasMounted, setHasMounted] = useState(false);
+
+useEffect(() => {
+  setHasMounted(true);
+}, []);
 
 
 
@@ -94,7 +102,7 @@ const Navbar = () => {
                   <div
                     ref={accountRef}
                     onMouseEnter={() => { isUser && setIsAccountMenuOpen(true) }}
-                    onClick={() => { !isUser && setIsLoginDialog(true) }}
+                    onClick={() => { !isUser && dispatch(setIsLoginDialog(true)) }}
                   >
                     <button className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                       <FiUser className="text-gray-700 dark:text-gray-300" />
@@ -106,12 +114,14 @@ const Navbar = () => {
                 </div>
 
                 {/* Cart */}
-                <button className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 relative">
+                <Link href={'/cart'} className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 relative">
                   <FiShoppingCart className="text-gray-700 dark:text-gray-300" />
-                  <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    3
-                  </span>
-                </button>
+                  {hasMounted && (
+  <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+    {cart.length}
+  </span>
+)}
+                </Link>
               </div>
             </div>
           )}
@@ -119,7 +129,7 @@ const Navbar = () => {
       </div>
 
       {
-        isLoginDialog && !isUser && <LoginDialog show={isLoginDialog} setShow={setIsLoginDialog} />
+        isLoginDialog && !isUser && <LoginDialog show={isLoginDialog} onClose={()=> dispatch(setIsLoginDialog(false))} />
       }
     </nav>
   );
@@ -127,19 +137,114 @@ const Navbar = () => {
 
 export default Navbar;
 
+
 const SearchItemComponent = ({ searchRef }) => {
+  const [searchText, setSearchText] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [triggerSearch, { data: searchResponse, isFetching, error }] = useLazyGetUserAllProductBySearchQuery();
+  const router = useRouter();
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchText.trim()) {
+        triggerSearch(searchText);
+        setShowResults(true);
+      } else {
+        setShowResults(false);
+      }
+    }, 500); // debounce 500ms
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchText, triggerSearch]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (searchText.trim()) {
+      router.push(`/products/${searchText}`);
+      setShowResults(false);
+    }
+  };
+
+  const handleProductClick = () => {
+    setShowResults(false);
+    setSearchText('');
+  };
+
+  // Extract products from response or default to empty array
+  const products = searchResponse?.data || [];
+
   return (
     <div className="relative">
-      <input
-        ref={searchRef}
-        type="text"
-        placeholder="Search for anything..."
-        className="w-full mx pl-4 pr-10 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-1 focus:ring-green-1 dark:bg-gray-800 dark:text-white"
-      />
-      <FiSearch className="absolute right-3 top-3 text-gray-400" />
+      <form onSubmit={handleSubmit}>
+        <input
+          ref={searchRef}
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onFocus={() => searchText.trim() && setShowResults(true)}
+          onBlur={() => setTimeout(() => setShowResults(false), 200)}
+          placeholder="Search for anything..."
+          className="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-1 focus:ring-green-500 dark:bg-gray-800 dark:text-white"
+        />
+        <button type="submit" className="absolute right-3 top-3">
+          <FiSearch className="text-gray-400 hover:text-gray-600" />
+        </button>
+      </form>
+
+      {/* Search results dropdown */}
+      {showResults && (
+        <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto scrollEditclass">
+          {isFetching ? (
+            <div className="p-4 text-center text-gray-500">Loading...</div>
+          ) : error ? (
+            <div className="p-4 text-center text-red-500">Error loading results</div>
+          ) : products.length > 0 ? (
+            <ul>
+              {products.map((product) => (
+                <li
+                  key={product._id}
+                  className="p-3  hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+                  onClick={handleProductClick}
+                >
+                  <Link href={`/product/${product.slug || product._id}`} className="block">
+                    <div className="flex items-center gap-3">
+                      {product.imageCover && (
+                        <Image
+                        height={50}
+                        width={50} 
+                          src={product.imageCover} 
+                          alt={product.name}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                      )}
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white line-clamp-1">
+                          {product.name}
+                        </div>
+                        <div className="flex gap-2 text-sm text-gray-500 dark:text-gray-400">
+                          <span>${product.discountPrice || product.price}</span>
+                          {product.discountPrice && (
+                            <span className="line-through">${product.price}</span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {product.category?.name}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : searchText.trim() ? (
+            <div className="p-4 text-center text-gray-500">No products found</div>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 };
+
 
 
 const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen,image, name, isAccountMenuOpen }) => {

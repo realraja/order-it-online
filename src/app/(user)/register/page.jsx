@@ -28,7 +28,7 @@ export default function Register() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const {isUser} = useSelector((state) => state.auth);
+  const {isUser,cart} = useSelector((state) => state.auth);
   console.log(isUser);
 
 
@@ -95,10 +95,12 @@ export default function Register() {
     e.preventDefault();
     if (!isValid) return;
 
+    const loginCart = cart?.map(p => ({product:p.product._id,quantity:p.quantity})) || [];
+
     try {
       setButtonLoading(true);
 
-      const {data} = await RegisterUser({ image, name, email, phone, password, dob });
+      const {data} = await RegisterUser({ image, name, email, phone, password, dob,cart:loginCart });
       if(data) {
         await dispatch(login(data));
         router.push('/'); // Redirect to home page after successful registration

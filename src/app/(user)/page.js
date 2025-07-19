@@ -1,23 +1,10 @@
-// <ThemeProvider>
-"use client";
-import CategoryGrid from "@/components/user/CategoryGrid";
-import FeaturedProducts from "@/components/user/FeaturedProducts";
-import HeroSection from "@/components/user/heroSection";
-import { toast } from "react-toastify";
+import CategoryGrid from "@/components/user/home/CategoryGrid";
+import FeaturedProducts from "@/components/user/home/FeaturedProducts";
+import HeroSection from "@/components/user/home/heroSection";
 
 function App() {
   return (
     <div className="transition-colors duration-300">
-      {/* <button
-        onClick={() =>
-          toast.success("🦄 Wow so easy!", {
-            position: "top-left",
-            autoClose: 5000,
-          })
-        }
-      >
-        toast
-      </button> */}
       <main>
         <HeroSection />
         <CategoryGrid />

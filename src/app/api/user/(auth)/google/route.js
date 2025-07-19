@@ -17,7 +17,7 @@ export const POST = async (req) => {
   try {
     await connectDB();
     const body = await req.json();
-    const { googleToken } = body;
+    const { googleToken,cart } = body;
     if (!googleToken) {
       return ResponseFailed("token is required!");
     }
@@ -58,7 +58,10 @@ export const POST = async (req) => {
         password: hashedPassword,
         imgUrl: imgUrl ? imgUrl[0] : undefined,
         token1: token,
+        cart
       });
+
+      await user.populate('cart.product');
 
       const res = successResponse("User registered successfully", user);
 
@@ -75,7 +78,9 @@ export const POST = async (req) => {
         user.token2 = user.token1;
         user.token1 = token;
     }
+    user.cart = cart.length > 0? cart :user.cart
     await user.save();
+    await user.populate('cart.product');
 
     const res = successResponse("Login successful", user);
     setCookie(res, token);

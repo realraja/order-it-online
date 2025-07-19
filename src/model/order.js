@@ -18,15 +18,12 @@ const schema = new Schema(
           type: Number,
           required: [true, "Order item must have a quantity"],
           min: [1, "Quantity must be at least 1"],
-        },
-        price: {
-          type: Number,
-          required: [true, "Order item must have a price"],
-          min: [0, "Price must be at least 0"],
-        },
+        }
       },
     ],
     shippingAddress: {
+      name:String,
+      phone:String,
       landmark: String,
       city: String,
       state: String,

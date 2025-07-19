@@ -9,7 +9,7 @@ export const successResponse = (
 ) => {
   const responseBody = {
     success: true,
-    message,
+    message,isOk: true ,
     data,
     ...(metadata && { metadata }),
   };
@@ -29,7 +29,7 @@ export const failedResponse = (
 ) => {
   const responseBody = {
     success: false,
-    message,
+    message, isOk: false ,
     data,
     ...(metadata && { metadata }),
   };
@@ -59,7 +59,7 @@ export const errorResponse = (
   // Log server errors (500+)
   if (status >= 500) {
     console.log("Server Error:", {
-      message,
+      message, isOk: false ,
       error,
       errorCode,
       status,

@@ -5,12 +5,13 @@ import { toast } from 'react-toastify';
 import { GoogleLoginUser } from '@/utils/UserActions';
 import { BeatLoader } from 'react-spinners';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from '@/redux/slicer/auth';
 
 export default function GoogleSignIn() {
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
+    const {cart} = useSelector(state => state.auth)
 
     const handleSuccess = async (credentialResponse) => {
         try {
@@ -18,7 +19,8 @@ export default function GoogleSignIn() {
             const decoded = jwtDecode(credentialResponse.credential);
             console.log(decoded);
 
-            const {data} = await GoogleLoginUser({ googleToken: credentialResponse.credential });
+            const loginCart = cart?.map(p => ({product:p.product._id,quantity:p.quantity})) || [];
+            const {data} = await GoogleLoginUser({ googleToken: credentialResponse.credential,cart:loginCart });
 
             if(data){
                 await dispatch(login(data));

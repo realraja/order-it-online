@@ -12,14 +12,15 @@ export async function POST(req) {
     const body = await req.json();
     const {
       email,
-      password
+      password,
+      cart
     } = body;
 
     if (!email || !password) {
       return failedResponse("Email and password are required");
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password")
     if (!user) {
       return failedResponse("Invalid email or password",null, 401);
     }
@@ -37,7 +38,10 @@ export async function POST(req) {
         user.token2 = user.token1;
         user.token1 = token;
     }
+    
+    user.cart = cart.length > 0? cart :user.cart
     await user.save();
+    await user.populate('cart.product');
 
     const res = successResponse("Login successful", user);
 

@@ -80,6 +80,22 @@ export const AdminTryCatch = (passedFunction) => async (req, context) => {
   }
 };
 
+
+
+
+
+
+export const SimpleTryCatch = (passedFunction) => async (req, context) => {
+  try {
+    await connectDB();
+
+    return await passedFunction(req, context); // <== forward context (e.g. { params })
+  } catch (error) {
+    console.log("try catch error: " + error);
+    return ResponseFailedError("Internal Server Error", error.message);
+  }
+};
+
 // export const UserTryCatch2 = (passedFunction) => async (req, context) => {
 //   try {
 //     await connectDB();

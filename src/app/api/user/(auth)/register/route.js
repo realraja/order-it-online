@@ -17,6 +17,7 @@ export async function POST(req) {
     password,
     dob,
     image,  
+    cart
   } = body;
 
 //   console.log('running register route',name, email, phone, password, dob, image);
@@ -65,7 +66,9 @@ export async function POST(req) {
       dob: new Date(dob),
       imgUrl: imgUrl ? imgUrl[0] : undefined,
       token1: token,
+      cart
     });
+    await user.populate('cart.product');
 
     const res = successResponse("User registered successfully", user);
 

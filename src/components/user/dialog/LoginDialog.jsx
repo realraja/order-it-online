@@ -11,10 +11,10 @@ import DialogContextSimple from '@/components/ui/SimpleDialogContext';
 import GoogleSignIn from '../GoogleLogin';
 import { useRouter } from 'next/navigation';
 import { LoginUser, SendResetPasswordLinkUser } from '@/utils/UserActions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from '@/redux/slicer/auth';
 
-const LoginDialog = ({ show, setShow }) => {
+const LoginDialog = ({ show, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -25,6 +25,8 @@ const LoginDialog = ({ show, setShow }) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const {cart}= useSelector(state => state.auth);
+
   const isValid = email && password;
 
   const handleSubmit = async (e) => {
@@ -33,10 +35,13 @@ const LoginDialog = ({ show, setShow }) => {
     try {
       setButtonLoading(true);
 
-      const { data } = await LoginUser({ email, password });
+      const loginCart = cart?.map(p => ({product:p.product._id,quantity:p.quantity})) || [];
+      // console.log(loginCart)
+
+      const { data } = await LoginUser({ email, password,cart:loginCart });
       if (data) {
         await dispatch(login(data));
-        setShow(false); // Close the dialog on successful login
+        onClose() // Close the dialog on successful login
       }
 
 
@@ -52,11 +57,11 @@ const LoginDialog = ({ show, setShow }) => {
     await SendResetPasswordLinkUser({email});
     setButtonLoading(false);
     setShowForgotPassword(false);
-    setShow(false)
+    onClose()
   };
 
   return (
-    <DialogContextSimple showDialog={show} handleClose={()=> setShow(false)}>
+    <DialogContextSimple showDialog={show} onClose={()=> onClose()}>
       <div className="flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -164,7 +169,7 @@ const LoginDialog = ({ show, setShow }) => {
 
                 <p className="text-center dark:text-gray-400 text-gray-600">
                   Don't have an account?{' '}
-                  <span onClick={() => { router.push('/register'); setShow(false); }} className="cursor-pointer text-purple-400 hover:underline font-medium">
+                  <span onClick={() => { router.push('/register'); onClose(); }} className="cursor-pointer text-purple-400 hover:underline font-medium">
                     Register
                   </span>
                 </p>

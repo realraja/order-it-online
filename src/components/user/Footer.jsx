@@ -1,86 +1,200 @@
+"use client";
+
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { useState } from "react";
+import { FiMail, FiMapPin, FiPhone, FiSend } from "react-icons/fi";
+
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    email: "",
+    query: ""
+  });
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    alert(`Thank you for subscribing with ${email}`);
+    setEmail("");
+  };
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    alert(`Thank you for your query, ${contactForm.name}! We'll get back to you soon.`);
+    setContactForm({ name: "", email: "", query: "" });
+  };
+
+  const footerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.5
+      }
+    })
+  };
+
   return (
-    <footer className="bg-gray-900 text-white py-12">
+    <motion.footer
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={footerVariants}
+      className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white py-16"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-4">ShopEverything</h3>
-            <p className="text-gray-400">
-              Your one-stop shop for all your needs.
+        <div className="flex max-sm:flex-col gap-10 mb-12">
+          {/* Company Info */}
+          <motion.div
+            custom={0}
+            variants={itemVariants}
+            className="space-y-4"
+          >
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+              ShopEverything
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              Your one-stop shop for all your needs. Quality products at affordable prices.
             </p>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Shop</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  All Products
-                </a>
+          <Image height={350} width={350} alt="logo" src="/static/logo.png" />
+          </motion.div>
+
+        
+
+          {/* Contact Information */}
+          <motion.div
+            custom={2}
+            variants={itemVariants}
+            className="space-y-4"
+          >
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Contact Us</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <FiMapPin className="text-indigo-600 dark:text-indigo-400 mt-1 mr-3 flex-shrink-0" />
+                <span className="text-gray-600 dark:text-gray-300">123 Shop Street, Retail City, RC 12345</span>
               </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Featured
-                </a>
+              <li className="flex items-center">
+                <FiPhone className="text-indigo-600 dark:text-indigo-400 mr-3" />
+                <span className="text-gray-600 dark:text-gray-300">+1 (555) 123-4567</span>
               </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  New Arrivals
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Deals
-                </a>
+              <li className="flex items-center">
+                <FiMail className="text-indigo-600 dark:text-indigo-400 mr-3" />
+                <span className="text-gray-600 dark:text-gray-300">support@shopeverything.com</span>
               </li>
             </ul>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Support</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Contact Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  FAQs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Shipping
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  Returns
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Newsletter</h4>
-            <p className="text-gray-400 mb-4">
-              Subscribe to get updates on new products and deals.
-            </p>
-            <div className="flex">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="px-4 py-2 w-full rounded-l-lg focus:outline-none text-gray-900"
-              />
-              <button className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-r-lg">
-                Subscribe
-              </button>
+          </motion.div>
+
+          {/* Newsletter & Contact Form */}
+          <motion.div
+            custom={3}
+            variants={itemVariants}
+            className="space-y-6"
+          >
+            <div>
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Newsletter</h4>
+              <p className="text-gray-600 dark:text-gray-300 mb-3">
+                Subscribe to get updates on new products and deals.
+              </p>
+              <form onSubmit={handleSubscribe} className="flex">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your email"
+                  required
+                  className="px-4 py-3 w-full rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                />
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-indigo-600 hover:bg-indigo-700 px-4 py-3 rounded-r-lg text-white flex items-center justify-center"
+                >
+                  <FiSend className="mr-2" />
+                </motion.button>
+              </form>
             </div>
+
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Have a Question?</h4>
+              <form onSubmit={handleContactSubmit} className="space-y-3">
+                <input
+                  type="text"
+                  value={contactForm.name}
+                  onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                  placeholder="Your name"
+                  required
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                />
+                <input
+                  type="email"
+                  value={contactForm.email}
+                  onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                  placeholder="Your email"
+                  required
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                />
+                <textarea
+                  value={contactForm.query}
+                  onChange={(e) => setContactForm({...contactForm, query: e.target.value})}
+                  placeholder="Your query"
+                  required
+                  rows="3"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                ></textarea>
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition duration-300"
+                >
+                  Submit Query
+                </motion.button>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Copyright */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="border-t border-gray-200 dark:border-gray-700 pt-8 text-center"
+        >
+          <p className="text-gray-500 dark:text-gray-400">
+            &copy; {new Date().getFullYear()} ShopEverything. All rights reserved.
+          </p>
+          <div className="flex justify-center space-x-6 mt-4">
+            {["Terms", "Privacy", "Cookies"].map((item, index) => (
+              <motion.a
+                key={index}
+                href="#"
+                whileHover={{ scale: 1.1 }}
+                className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm"
+              >
+                {item}
+              </motion.a>
+            ))}
           </div>
-        </div>
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} ShopEverything. All rights reserved.</p>
-        </div>
+        </motion.div>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
 

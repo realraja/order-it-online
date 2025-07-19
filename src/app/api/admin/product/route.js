@@ -1,4 +1,5 @@
 import { getSlugFromName } from "@/Constants/SlugMaker";
+import { generateRandomString } from "@/middleware/jwt";
 import { failedResponse, ResponseSuccess } from "@/middleware/response";
 import { AdminTryCatch } from "@/middleware/TryCatch";
 import Product from "@/model/product";
@@ -39,6 +40,14 @@ export const POST = AdminTryCatch(async (req) => {
 
   //   console.log(imgUrl,image)
 
+  let slug = getSlugFromName(name);
+
+  const existProduct = await Product.find({slug});
+
+  if(existProduct){
+    slug += `-${generateRandomString(10)}`;
+  }
+
   const product = await Product.create({
     name,
     images,
@@ -50,7 +59,7 @@ export const POST = AdminTryCatch(async (req) => {
     brand,
     quantity,
     imageCover,
-    slug: getSlugFromName(name)
+    slug
   });
 
   return ResponseSuccess("product added successfully!", product);
@@ -98,7 +107,6 @@ export const PUT = AdminTryCatch(async (req) => {
     brand,
     quantity,
     imageCover,
-    slug: getSlugFromName(name),
     id,
   });
 
