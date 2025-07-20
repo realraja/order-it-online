@@ -8,7 +8,8 @@ const DialogContextSimple = ({
   showDialog,
   onClose,
   children,
-  closeOnOutsideClick = true
+  closeOnOutsideClick = true,
+  isFullWidth = false
 }) => {
   const dialogRef = useRef(null);
 
@@ -49,7 +50,7 @@ const DialogContextSimple = ({
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-auto">
             <motion.div
               ref={dialogRef}
-              className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-auto scrollEditclass max-h-full"
+              className={`w-full ${!isFullWidth && 'max-w-md'}  bg-white dark:bg-gray-900 text-black dark:text-white rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-auto scrollEditclass max-h-full`}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ 
                 opacity: 1, 

@@ -13,3 +13,4 @@ export const GetLocalStorage = ({ key}) => {
 
   export const CartStorageKey = 'CART'
   export const WishlistStorageKey = 'WISHLIST'
+  export const AdminSidebar = 'ADMINSIDEBAR'

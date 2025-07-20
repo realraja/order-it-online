@@ -1,7 +1,7 @@
 'use client'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const data = [
+const dataLocal = [
   { name: 'Mon', users: 4000 },
   { name: 'Tue', users: 3000 },
   { name: 'Wed', users: 5000 },
@@ -11,7 +11,7 @@ const data = [
   { name: 'Sun', users: 3490 },
 ];
 
-export default function ChartUsers() {
+export default function ChartUsers({data = dataLocal}) {
   return (
     <div className="h-80">
       <ResponsiveContainer width="100%" height="100%">

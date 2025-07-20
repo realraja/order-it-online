@@ -1,7 +1,7 @@
 'use client'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const data = [
+const dataLocal = [
   { name: 'Electronics', value: 400 },
   { name: 'Clothing', value: 300 },
   { name: 'Home & Kitchen', value: 300 },
@@ -9,9 +9,9 @@ const data = [
   { name: 'Other', value: 100 },
 ];
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8','#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-export default function ChartCategories() {
+export default function ChartCategories({data = dataLocal}) {
   return (
     <div className="h-80">
       <ResponsiveContainer width="100%" height="100%">

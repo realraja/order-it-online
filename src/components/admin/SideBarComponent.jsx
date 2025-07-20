@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dialog, Transition } from '@headlessui/react';
@@ -34,6 +34,11 @@ export default function Sidebar() {
   const pathname = usePathname();
       const {isSidebarOpen} = useSelector(state => state.admin)
       const dispatch = useDispatch();
+      const [isLoading, setIsLoading] = useState(true);
+
+      useEffect(() => {
+      setIsLoading(false)
+      }, [])
 
   function handleClose() {
   if (typeof window !== 'undefined') {
@@ -43,6 +48,8 @@ export default function Sidebar() {
     }
   }
 }
+
+if(isLoading) return null
 
   return (
     <>
@@ -114,7 +121,7 @@ export default function Sidebar() {
       </Transition.Root>
 
       {/* Desktop Sidebar */}
-      <div className={`${isSidebarOpen ? ' max-sm:hidden sm:hidden md:inset-y-0 md:flex md:flex-col':'hidden'} sticky top-0 left-0 h-screen pt-2 `}>
+       <div className={`${isSidebarOpen ? ' max-sm:hidden sm:hidden md:inset-y-0 md:flex md:flex-col':'hidden'} sticky top-0 left-0 h-screen pt-2 `}>
         <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="flex flex-1 flex-col pt-5 pb-4">
             <div className="flex items-center px-4">

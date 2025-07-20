@@ -3,8 +3,16 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api/admin" }),
-  tagTypes: ["Users", "Category","Image","Product"],
+  tagTypes: ["Users", "Category", "Image", "Product","Dashbord","Order"],
   endpoints: (builder) => ({
+    getDashbordData: builder.query({
+      query: () => ({
+        url: "/dashbord",
+        credentials: "include",
+      }),
+      providesTags: ["Dashbord"],
+    }),
+
     getUserData: builder.query({
       query: () => ({
         url: "/users",
@@ -18,9 +26,8 @@ const adminApi = createApi({
         method: "DELETE",
         credentials: "include",
       }),
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["Users","Dashbord"],
     }),
-
 
     getCategory: builder.query({
       query: () => ({
@@ -36,7 +43,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Category"],
+      invalidatesTags: ["Category","Dashbord"],
     }),
     updateCategory: builder.mutation({
       query: (data) => ({
@@ -45,7 +52,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Category"],
+      invalidatesTags: ["Category","Dashbord"],
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
@@ -54,9 +61,8 @@ const adminApi = createApi({
         credentials: "include",
         body: id,
       }),
-      invalidatesTags: ["Category"],
+      invalidatesTags: ["Category","Dashbord"],
     }),
-
 
     getImage: builder.query({
       query: () => ({
@@ -72,7 +78,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Image"],
+      invalidatesTags: ["Image","Dashbord"],
     }),
     updateImage: builder.mutation({
       query: (data) => ({
@@ -90,9 +96,8 @@ const adminApi = createApi({
         credentials: "include",
         body: id,
       }),
-      invalidatesTags: ["Image"],
+      invalidatesTags: ["Image","Dashbord"],
     }),
-
 
     getProduct: builder.query({
       query: () => ({
@@ -108,7 +113,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: ["Product","Dashbord"],
     }),
     updateProduct: builder.mutation({
       query: (data) => ({
@@ -126,24 +131,65 @@ const adminApi = createApi({
         credentials: "include",
         body: id,
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: ["Product","Dashbord"],
     }),
 
 
 
-
-
+    getOrder: builder.query({
+      query: () => ({
+        url: "/order",
+        credentials: "include",
+      }),
+      providesTags: ["Order"],
+    }),
+    updateOrder: builder.mutation({
+      query: (data) => ({
+        url: "/order",
+        method: "PUT",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Order"],
+    }),
+    deleteOrder: builder.mutation({
+      query: (id) => ({
+        url: `/order`,
+        method: "DELETE",
+        credentials: "include",
+        body: id,
+      }),
+      invalidatesTags: ["Order","Dashbord"],
+    }),
   }),
 });
 
-export const { useGetUserDataQuery, useDeleteUserMutation,
+export const {
+  useGetDashbordDataQuery,
 
-  useGetCategoryQuery,useAddCategoryMutation,useUpdateCategoryMutation,useDeleteCategoryMutation,
-
-  useGetImageQuery,useAddImageMutation,useDeleteImageMutation,useUpdateImageMutation,
-
-  useGetProductQuery,useAddProductMutation,useUpdateProductMutation,useDeleteProductMutation,
 
   
- } = adminApi;
+  useGetUserDataQuery,
+  useDeleteUserMutation,
+
+  useGetCategoryQuery,
+  useAddCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+
+  useGetImageQuery,
+  useAddImageMutation,
+  useDeleteImageMutation,
+  useUpdateImageMutation,
+
+  useGetProductQuery,
+  useAddProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+
+
+  useGetOrderQuery,
+  useUpdateOrderMutation,
+  useDeleteOrderMutation,
+} = adminApi;
 export default adminApi;

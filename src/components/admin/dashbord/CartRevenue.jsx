@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const data = [
+const dataLocal = [
   { name: 'Jan', revenue: 4000 },
   { name: 'Feb', revenue: 3000 },
   { name: 'Mar', revenue: 5000 },
@@ -26,7 +26,7 @@ const data = [
   { name: 'Dec', revenue: 8000 },
 ];
 
-export default function ChartRevenue() {
+export default function ChartRevenue({data = dataLocal}) {
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -38,12 +38,12 @@ export default function ChartRevenue() {
           <XAxis dataKey="name" stroke="#888" />
           <YAxis stroke="#888" />
           <Tooltip
-            formatter={(value) => [`$${value.toLocaleString()}`, 'Revenue']}
+            formatter={(value) => [`₹${value.toLocaleString()}`, 'Revenue']}
             contentStyle={{ backgroundColor: '#1f2937', borderRadius: 8, color: '#fff' }}
             labelStyle={{ color: '#f9fafb' }}
           />
           <Legend />
-          <Bar dataKey="revenue" fill="#6366f1" name="Revenue ($)" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="revenue" fill="#6366f1" name="Revenue (₹)" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -1,7 +1,7 @@
 'use client'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const data = [
+const dataLocal = [
   { name: 'Jan', orders: 4000 },
   { name: 'Feb', orders: 3000 },
   { name: 'Mar', orders: 5000 },
@@ -11,7 +11,7 @@ const data = [
   { name: 'Jul', orders: 3490 },
 ];
 
-export default function ChartOrders() {
+export default function ChartOrders({data = dataLocal}) {
   return (
     <div className="h-80">
       <ResponsiveContainer width="100%" height="100%">
