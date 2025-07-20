@@ -2,6 +2,21 @@ import { failedResponse, ResponseSuccess } from "@/middleware/response";
 import { UserTryCatch } from "@/middleware/TryCatch";
 import User from "@/model/user";
 
+export const GET = UserTryCatch(async (req) => {
+
+  await req.user.populate('wishlist');
+
+  const wishlist = req.user.wishlist.map((p) => {
+    return ({
+      ...p.toObject(),rating:3.7
+    })
+  })
+
+  return ResponseSuccess("Wishlist get successfully!", wishlist);
+});
+
+
+
 export const PUT = UserTryCatch(async (req) => {
   const { product } = await req.json();
 

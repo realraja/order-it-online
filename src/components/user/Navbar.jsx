@@ -4,7 +4,7 @@ import { ListOrdered } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
-import { FiShoppingCart, FiSearch, FiUser, FiSettings, FiLogOut } from "react-icons/fi";
+import { FiShoppingCart, FiSearch, FiUser, FiSettings, FiLogOut, FiHeart } from "react-icons/fi";
 import LoginDialog from "../user/dialog/LoginDialog";
 import { useDispatch, useSelector } from "react-redux";
 import DialogContext from "../ui/DailogContext";
@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 
 const Navbar = () => {
 
-  const { userData, isUser ,isLoginDialog,cart} = useSelector((state) => state.auth);
+  const { userData, isUser, isLoginDialog, cart } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   // console.log(userData);
 
@@ -28,9 +28,9 @@ const Navbar = () => {
 
   const [hasMounted, setHasMounted] = useState(false);
 
-useEffect(() => {
-  setHasMounted(true);
-}, []);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
 
 
@@ -117,10 +117,10 @@ useEffect(() => {
                 <Link href={'/cart'} className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 relative">
                   <FiShoppingCart className="text-gray-700 dark:text-gray-300" />
                   {hasMounted && (
-  <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-    {cart.length}
-  </span>
-)}
+                    <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cart.length}
+                    </span>
+                  )}
                 </Link>
               </div>
             </div>
@@ -129,7 +129,7 @@ useEffect(() => {
       </div>
 
       {
-        isLoginDialog && !isUser && <LoginDialog show={isLoginDialog} onClose={()=> dispatch(setIsLoginDialog(false))} />
+        isLoginDialog && !isUser && <LoginDialog show={isLoginDialog} onClose={() => dispatch(setIsLoginDialog(false))} />
       }
     </nav>
   );
@@ -210,9 +210,9 @@ const SearchItemComponent = ({ searchRef }) => {
                     <div className="flex items-center gap-3">
                       {product.imageCover && (
                         <Image
-                        height={50}
-                        width={50} 
-                          src={product.imageCover} 
+                          height={50}
+                          width={50}
+                          src={product.imageCover}
                           alt={product.name}
                           className="w-10 h-10 object-cover rounded"
                         />
@@ -247,7 +247,7 @@ const SearchItemComponent = ({ searchRef }) => {
 
 
 
-const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen,image, name, isAccountMenuOpen }) => {
+const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen, image, name, isAccountMenuOpen }) => {
   const [isLogoutDialog, setIsLogoutDialog] = useState(false);
   const [isLogOutLoading, setIsLogOutLoading] = useState(false);
   const dispatch = useDispatch();
@@ -272,27 +272,27 @@ const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen,image, name, isAcco
           <div className="flex gap-3 items-center px-2">
             <img src={image} className="size-8 rounded-full" alt="userImage" />
 
-          <div className=" py-3 border-b border-gray-100 dark:border-gray-700">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">Welcome back</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{name}</p>
-          </div>
+            <div className=" py-3 border-b border-gray-100 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">Welcome back</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{name}</p>
+            </div>
           </div>
 
           {/* Menu items with icons */}
-          <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+          <Link href={'/profile'} className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
             <FiUser className="w-5 h-5 mr-3 text-gray-400" />
-            Account Settings
-          </button>
+            Profile
+          </Link>
 
-          <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <FiSettings className="w-5 h-5 mr-3 text-gray-400" />
-            Preferences
-          </button>
+          <Link href={'/wishlist'} className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <FiHeart className="w-5 h-5 mr-3 text-gray-400" />
+            Wishlist
+          </Link>
 
-          <button className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+          <Link href={'/orders'} className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
             <ListOrdered className="w-5 h-5 mr-3 text-gray-400" />
             Orders
-          </button>
+          </Link>
 
           <div className="border-t border-gray-100 dark:border-gray-700"></div>
 
@@ -304,7 +304,7 @@ const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen,image, name, isAcco
 
       </div>
       {
-        isLogoutDialog && <DialogContext showDialog={isLogoutDialog} onClose={()=> setIsLogoutDialog()} title="Logout" submitText="LogOut" onSubmit={handleLogout} isLoading={isLogOutLoading} Icon={FiLogOut}  >
+        isLogoutDialog && <DialogContext showDialog={isLogoutDialog} onClose={() => setIsLogoutDialog()} title="Logout" submitText="LogOut" onSubmit={handleLogout} isLoading={isLogOutLoading} Icon={FiLogOut}  >
 
           <p className="">Are you sure you want to logout?</p>
 

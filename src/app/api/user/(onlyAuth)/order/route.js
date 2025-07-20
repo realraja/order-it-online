@@ -3,7 +3,7 @@ import { UserTryCatch } from "@/middleware/TryCatch";
 import { failedResponse, ResponseSuccess, successResponse } from "@/middleware/response";
 
 export const GET = UserTryCatch(async(req)=>{
-    const orders = await Order.find({user:req.id});
+    const orders = await Order.find({user:req.id}).populate('items.product');
     return successResponse('Order Fetched!',orders)
 })
 

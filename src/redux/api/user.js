@@ -53,6 +53,14 @@ const userApi = createApi({
       providesTags: ["Product"],
     }),
 
+
+    getWishlist: builder.query({
+      query: () => ({
+        url: "/wishlist",
+        credentials: "include",
+      }),
+      providesTags: ["Wishlist"],
+    }),
     toggleWishlist: builder.mutation({
       query: (data) => ({
         url: "/wishlist",
@@ -113,6 +121,13 @@ const userApi = createApi({
     }),
 
 
+    getOrders: builder.query({
+      query: () => ({
+        url: "/order",
+        credentials: "include",
+      }),
+      providesTags: ["Order"],
+    }),
     PlaceOrder: builder.mutation({
       query: (data) => ({
         url: "/order",
@@ -135,9 +150,11 @@ export const {
   useGetUserProductBySlugQuery,
 
 
+  useGetWishlistQuery,
   useToggleWishlistMutation,
   useAddRemoveFromCartMutation,
   useDeleteFromCartMutation,
+
 
 
   useAddAddressMutation,
@@ -145,6 +162,7 @@ export const {
   useDeleteAddressMutation,
 
   
+  useGetOrdersQuery,
   usePlaceOrderMutation
 } = userApi;
 export default userApi;

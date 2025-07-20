@@ -1,17 +1,23 @@
 "use client";
 
+import { SendNotificationToAdmin } from "@/utils/UserActions";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import { FiMail, FiMapPin, FiPhone, FiSend } from "react-icons/fi";
+import { useSelector } from "react-redux";
+import { PulseLoader } from "react-spinners";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false)
   const [contactForm, setContactForm] = useState({
-    name: "",
+    title: "",
     email: "",
-    query: ""
+    message: ""
   });
+
+  const { isUser, userData } = useSelector(state => state.auth);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -19,10 +25,13 @@ const Footer = () => {
     setEmail("");
   };
 
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
-    alert(`Thank you for your query, ${contactForm.name}! We'll get back to you soon.`);
-    setContactForm({ name: "", email: "", query: "" });
+    setIsLoadingSubmit(true)
+    await SendNotificationToAdmin({ title: contactForm.title, message: contactForm.message, email: isUser ? contactForm.email : userData.email, user: isUser ? userData._id : null })
+    setContactForm({ title: "", email: "", message: "" });
+    setIsLoadingSubmit(false);
+
   };
 
   const footerVariants = {
@@ -71,10 +80,10 @@ const Footer = () => {
             <p className="text-gray-600 dark:text-gray-300">
               Your one-stop shop for all your needs. Quality products at affordable prices.
             </p>
-          <Image height={350} width={350} alt="logo" src="/static/logo.png" />
+            <Image height={350} width={350} alt="logo" src="/static/logo.png" />
           </motion.div>
 
-        
+
 
           {/* Contact Information */}
           <motion.div
@@ -133,26 +142,27 @@ const Footer = () => {
             <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
               <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Have a Question?</h4>
               <form onSubmit={handleContactSubmit} className="space-y-3">
-                <input
-                  type="text"
-                  value={contactForm.name}
-                  onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
-                  placeholder="Your name"
-                  required
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                />
-                <input
+                {!isUser && <input
                   type="email"
                   value={contactForm.email}
-                  onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                  onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                   placeholder="Your email"
                   required
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                />}
+                <input
+                  type="text"
+                  value={contactForm.title}
+                  onChange={(e) => setContactForm({ ...contactForm, title: e.target.value })}
+                  placeholder="Your title"
+                  required
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
+
                 <textarea
-                  value={contactForm.query}
-                  onChange={(e) => setContactForm({...contactForm, query: e.target.value})}
-                  placeholder="Your query"
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                  placeholder="Your Message"
                   required
                   rows="3"
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
@@ -163,7 +173,7 @@ const Footer = () => {
                   whileTap={{ scale: 0.98 }}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition duration-300"
                 >
-                  Submit Query
+                  {isLoadingSubmit? <PulseLoader  />:'Submit'}
                 </motion.button>
               </form>
             </div>

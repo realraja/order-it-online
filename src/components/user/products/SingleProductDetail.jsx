@@ -32,7 +32,9 @@ function SingleProductDetail({ slug }) {
   useEffect(() => {
     setIsWishlisted(wishlist?.includes(product?._id) ?? false);
 
-  }, [product]);
+  }, [product,data,wishlist]);
+
+  // console.log(wishlist?.includes(product?._id),product)
 
 
   const nextImage = () => {

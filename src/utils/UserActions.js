@@ -72,3 +72,12 @@ export const logoutUser = userTryCatch(async () => {
   toast.success(data.message ? data.message : "User data fetched successfully");
   return data;
 });
+
+
+
+export const SendNotificationToAdmin = userTryCatch(async (userData = {}) => {
+  const { data } = await axios.post("/api/user/notification", userData);
+  toast.success(
+    data.message ? data.message : "Notification send successfully");
+  return data;
+});
