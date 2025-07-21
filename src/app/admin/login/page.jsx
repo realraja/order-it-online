@@ -7,7 +7,7 @@ import { LoginAdmin } from '@/utils/AdminAction';
 import { login } from '@/redux/slicer/admin';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
+    // const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +26,7 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const data = await LoginAdmin({username:email,password});
+           await LoginAdmin({password});
             // console.log(data);
             dispatch(login());
         } catch (err) {
@@ -55,7 +55,7 @@ export default function LoginPage() {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
+                        {/* <div>
                             <label htmlFor="email" className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                                 Email address
                             </label>
@@ -75,7 +75,7 @@ export default function LoginPage() {
                                     placeholder="you@example.com"
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
@@ -110,7 +110,7 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        {/* <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <input
                                     id="remember-me"
@@ -128,7 +128,7 @@ export default function LoginPage() {
                                     Forgot password?
                                 </a>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div>
                             <button

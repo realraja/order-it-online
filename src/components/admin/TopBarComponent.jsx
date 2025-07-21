@@ -1,5 +1,5 @@
 "use client"
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Menu as LucideMenu, Bell, ChevronDown } from 'lucide-react';
 import { Menu, Transition } from '@headlessui/react';
 import ThemeToggle from '../ui/ThemeContext';
@@ -8,6 +8,7 @@ import { logout, setIsSidebarOpen } from '@/redux/slicer/admin';
 import { FiLogOut } from 'react-icons/fi';
 import { logoutAdmin } from '@/utils/AdminAction';
 import DialogContext from '../ui/DailogContext';
+import { useRouter } from 'next/navigation';
 
 // import { useTheme } from './ThemeContext';
 
@@ -20,12 +21,13 @@ export default function Topbar() {
     const [isLogoutDialog, setIsLogoutDialog] = useState(false);
     const [isLogOutLoading, setIsLogOutLoading] = useState(false);
 
-    const { isSidebarOpen } = useSelector(state => state.admin)
+    const { isSidebarOpen,isAdmin } = useSelector(state => state.admin)
     const dispatch = useDispatch();
+    const router = useRouter();
 
-    // useEffect(() => {
-    //     if (!isAdmin) router.push('/admin/login');
-    // }, [isAdmin]);
+    useEffect(() => {
+        if (!isAdmin) router.push('/admin/login');
+    }, [isAdmin]);
 
     const handleLogout = async () => {
         setIsLogOutLoading(true);

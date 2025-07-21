@@ -55,12 +55,12 @@ export const AdminTryCatch = (passedFunction) => async (req, context) => {
     if (!token) {
       return ResponseFailed("Please Login First", "token not found");
     }
-    const {username,password} = verifyToken(token);
+    const {password} = verifyToken(token);
 
  
 
 
-    if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
+    if (password !== process.env.ADMIN_PASSWORD) {
       const res =  failedResponse('cookie not match');
       res.cookies.set("adminToken", "", {
         httpOnly: true,
