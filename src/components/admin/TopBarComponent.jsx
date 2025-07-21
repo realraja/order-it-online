@@ -9,6 +9,8 @@ import { FiLogOut } from 'react-icons/fi';
 import { logoutAdmin } from '@/utils/AdminAction';
 import DialogContext from '../ui/DailogContext';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 
 // import { useTheme } from './ThemeContext';
 
@@ -21,7 +23,7 @@ export default function Topbar() {
     const [isLogoutDialog, setIsLogoutDialog] = useState(false);
     const [isLogOutLoading, setIsLogOutLoading] = useState(false);
 
-    const { isSidebarOpen,isAdmin } = useSelector(state => state.admin)
+    const { isSidebarOpen, isAdmin } = useSelector(state => state.admin)
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -41,7 +43,9 @@ export default function Topbar() {
 
     return (
         <div className="fixed top-0 z-50 flex h-16 flex-shrink-0 w-full bg-white shadow dark:bg-gray-800 dark:shadow-gray-700">
-            <button
+            
+            <div className="flex flex-1 justify-between px-4">
+                <button
                 type="button"
                 className="cursor-pointer border-gray-200 px-4 text-gray-500"
                 onClick={() => dispatch(setIsSidebarOpen(!isSidebarOpen))}
@@ -49,8 +53,11 @@ export default function Topbar() {
                 <span className="sr-only">Open sidebar</span>
                 <LucideMenu className="h-6 w-6" aria-hidden="true" />
             </button>
-            <div className="flex flex-1 justify-between px-4">
-                <div className="flex flex-1"></div>
+                <Link href={'/admin'} className='flex justify-center items-center'>
+
+                    <Image src={'/static/logo.png'} height={500} width={500} alt='logo' className='w-16 h-16' />
+                    <span className='text-red-1 text-xl'>Order It Online</span>
+                </Link>
                 <div className="ml-4 flex items-center gap-4 md:ml-6">
                     {/* Theme toggle */}
                     <ThemeToggle />

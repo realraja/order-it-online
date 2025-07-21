@@ -36,58 +36,64 @@ function OrderSummary({ subtotal }) {
         }
     }, [])
 
-    // console.log(selectedAddress)
+    // console.log(selectedAddress) 
 
     const handleCheckout = async () => {
 
         try {
             if (selectedPayment === 'cod') {
-            await PlaceOrder({
-                items,
-                shippingAddress: selectedAddress,
-                paymentMethod: selectedPayment,
-                totalAmount: subtotal + shipping,
-                // paymentDetails = {},
-                // coupon,
-            }, 'Placing Order...');
+                await PlaceOrder({
+                    items,
+                    shippingAddress: selectedAddress,
+                    paymentMethod: selectedPayment,
+                    totalAmount: subtotal + shipping,
+                    // paymentDetails = {},
+                    // coupon,
+                }, 'Placing Order...');
 
-            dispatch(clearCart())
-        } else {
-            const { data } = await axios.post('/api/user/order/payment', { amount: (subtotal + shipping) * 100 });
-            // console.log(data.data)
+                dispatch(clearCart())
+            } else {
+                const { data } = await axios.post('/api/user/order/payment', { amount: (subtotal + shipping) * 100 });
+                // console.log(data.data)
 
-            const paymentData = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-                order_id: data.data.id,
+                const paymentData = {
+                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                    order_id: data.data.id,
 
-                handler: async function (response) {
-                    // console.log(response)
-                    const { data } = await axios.post('/api/user/order/verify-payment',{
-                    orderId: response.razorpay_order_id,
-                    razorpayPaymentId: response.razorpay_payment_id,
-                    razorpaySignature: response.razorpay_signature,
-                });
-                // console.log(data)
-                    toast.success(data.message,{position:'bottom-right'});
-                    await PlaceOrder({
-                        items,
-                        shippingAddress: selectedAddress,
-                        paymentMethod: selectedPayment,
-                        totalAmount: subtotal + shipping,
-                        // paymentDetails = {},
-                        // coupon,
-                    }, 'Placing Order...');
-                    dispatch(clearCart());
-                },
-            };
+                    handler: async function (response) {
+                        // console.log(response)
+                        const { data } = await axios.post('/api/user/order/verify-payment', {
+                            orderId: response.razorpay_order_id,
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpaySignature: response.razorpay_signature,
+                        });
+                        // console.log(data)
+                        toast.success(data.message, { position: 'bottom-right' });
+                        await PlaceOrder({
+                            items,
+                            paymentStatus: 'completed',
+                            paymentDetails: {
+                                transactionOrderId: response.razorpay_order_id,
+                                transactionPaymentId: response.razorpay_payment_id,
+                                amountPaid: subtotal + shipping
+                            },
+                            shippingAddress: selectedAddress,
+                            paymentMethod: selectedPayment,
+                            totalAmount: subtotal + shipping,
+                            // paymentDetails = {},
+                            // coupon,
+                        }, 'Placing Order...');
+                        dispatch(clearCart());
+                    },
+                };
 
-            const payment = new (window).Razorpay(paymentData);
-            payment.open();
-        }
+                const payment = new (window).Razorpay(paymentData);
+                payment.open();
+            }
         } catch (error) {
             console.log(error)
         }
-        
+
 
     }
 

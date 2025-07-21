@@ -121,15 +121,10 @@ if(isLoading) return null
       </Transition.Root>
 
       {/* Desktop Sidebar */}
-       <div className={`${isSidebarOpen ? ' max-sm:hidden sm:hidden md:inset-y-0 md:flex md:flex-col':'hidden'} sticky top-0 left-0 h-screen pt-2 `}>
+       <div className={` max-sm:hidden sm:hidden md:inset-y-0 md:flex md:flex-col sticky top-0 mt-6 left-0 h-screen pt-2 `}>
         <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="flex flex-1 flex-col pt-5 pb-4">
-            <div className="flex items-center px-4">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                Admin Panel
-              </h1>
-            </div>
-            <nav className="mt-5 flex-1 space-y-1 px-2">
+            <nav className="mt-5 flex-1 w-fit space-y-1 px-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -137,21 +132,22 @@ if(isLoading) return null
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`group flex items-center rounded-md px-4 py-3 text-sm font-medium ${
+                    className={`group flex w-fit items-center gap-3 rounded-md px-3 py-3 text-sm font-medium ${
                       isActive
                         ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
                     }`}
                   >
                     <Icon
-                      className={`mr-3 h-5 w-5 flex-shrink-0 ${
+                      className={`h-5 w-5 flex-shrink-0 ${
                         isActive
                           ? 'text-gray-500 dark:text-gray-300'
                           : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300'
                       }`}
                       aria-hidden="true"
                     />
-                    {item.name}
+                    <span className={`${isSidebarOpen ? ' ':'hidden'}`}>{item.name}</span>
+                    
                   </Link>
                 );
               })}

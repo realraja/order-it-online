@@ -41,9 +41,13 @@ const schema = new Schema(
       default: "pending",
     },
     paymentDetails: {
-      transactionId: String,
+      transactionOrderId: String,
+      transactionPaymentId: String,
       amountPaid: Number,
-      paymentDate: Date,
+      paymentDate: {
+      type: Date,
+      default: Date.now,
+    },
     },
     totalAmount: {
       type: Number,
