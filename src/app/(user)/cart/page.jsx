@@ -22,24 +22,20 @@ function CartPage() {
         setLoading(false)
     }, []);
 
-    // Sample addresses - in a real app these would come from user data
-
-
     // Calculate totals
     const subtotal = cart?.reduce((sum, item) => {
         const price = item.product?.discountPrice || item.product?.price
         return sum + (price * item.quantity)
     }, 0) || 0
 
-
     const handleRemoveItem = async (id) => {
         dispatch(deleteFromCart(id))
         if(isUser)  await DeleteFromCart({ product: id })
     }
 
-    const handleUpdateQuantity = async(product, quantity) => {
-        dispatch(addToCart({product,quantity}))
-        if(isUser)  await AddRemoveFromCart({product:product._id,quantity})
+    const handleUpdateQuantity = async(product, quantityChange) => {
+        dispatch(addToCart({product: product.product, quantity: quantityChange}))
+        if(isUser)  await AddRemoveFromCart({product: product.product?._id, quantity: quantityChange})
     }
 
     if (loading) {
@@ -108,7 +104,7 @@ function CartPage() {
                         <AnimatePresence>
                             {cart?.map((item) => (
                                 <motion.div
-                                    key={item.product._id}
+                                    key={item._id}  // Changed to use item._id instead of product._id
                                     layout
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -136,9 +132,12 @@ function CartPage() {
                                                 className="font-medium text-gray-900 dark:text-white hover:text-green-500 transition-colors"
                                             >
                                                 {item.product?.name}
+                                                {item.product?.variantName && (
+                                                    <span className="text-sm text-gray-500 ml-2">({item.product?.variantName})</span>
+                                                )}
                                             </Link>
                                             <button
-                                                onClick={() => handleRemoveItem(item.product?._id)}
+                                                onClick={() => handleRemoveItem(item._id)}  // Changed to use item._id
                                                 className="text-gray-400 hover:text-red-500 transition-colors"
                                             >
                                                 <FiTrash2 />
@@ -151,17 +150,17 @@ function CartPage() {
                                             <div className="flex items-center gap-4">
                                                 <div className="flex border rounded-lg overflow-hidden">
                                                     <button
-                                                    disabled={item.quantity === 1}
-                                                        onClick={() => handleUpdateQuantity(item.product, - 1)}
-                                                        className={`px-3 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600  text-black dark:text-white transition-colors  ${item.quantity === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        disabled={item.quantity === 1}
+                                                        onClick={() => handleUpdateQuantity(item, -1)}
+                                                        className={`px-3 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-black dark:text-white transition-colors ${item.quantity === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                     >
                                                         <FiMinus size={14} />
                                                     </button>
-                                                    <span className="px-3 py-1 w-12  text-black dark:text-white text-center">{item.quantity}</span>
+                                                    <span className="px-3 py-1 w-12 text-black dark:text-white text-center">{item.quantity}</span>
                                                     <button
-                                                        onClick={() => handleUpdateQuantity(item.product, + 1)}
+                                                        onClick={() => handleUpdateQuantity(item, +1)}
                                                         disabled={item.quantity >= item.product?.quantity}
-                                                        className={`px-3  text-black dark:text-white py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ${item.quantity >= item.product?.quantity ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                        className={`px-3 text-black dark:text-white py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ${item.quantity >= item.product?.quantity ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                     >
                                                         <FiPlus size={14} />
                                                     </button>
@@ -204,7 +203,7 @@ function CartPage() {
                             </div>
                         </div>
                     ) : (
-                        <OrderSummery subtotal={subtotal}  />
+                        <OrderSummery subtotal={subtotal} />
                     )}
                 </div>
             )}

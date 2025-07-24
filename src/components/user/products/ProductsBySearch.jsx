@@ -14,7 +14,7 @@ function ProductBySearch({ name }) {
     }
   }, [data])
 
-  console.log(data?.data,name)
+  // console.log(data?.data,name)
 
 
 

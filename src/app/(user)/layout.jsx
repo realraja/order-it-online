@@ -1,5 +1,6 @@
 import CheckUser from "@/components/user/CheckUser";
 import Footer from "@/components/user/Footer";
+import FooterMobile from "@/components/user/FooterMobile";
 import Navbar from "@/components/user/Navbar";
 import Script from "next/script";
 
@@ -15,6 +16,7 @@ const Layout = ({ children }) => {
         src="https://checkout.razorpay.com/v1/checkout.js"
       />
       <Footer />
+      <FooterMobile />
     </div>
   );
 };

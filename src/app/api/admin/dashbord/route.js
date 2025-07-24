@@ -34,18 +34,25 @@ export const GET = AdminTryCatch(async (req) => {
     monthlyMap[month] += order.totalAmount;
   });
 
-  const monthlyRevenue = monthNames.map((name, index) => ({
-    name,
-    revenue: monthlyMap[index],
-  }));
+  const currentMonthIndex = new Date().getMonth();
+  const monthlyRevenue = [
+    ...monthNames.map((name, index) => ({
+      name,
+      revenue: monthlyMap[index],
+    })).slice(currentMonthIndex + 1),
+    ...monthNames.map((name, index) => ({
+      name,
+      revenue: monthlyMap[index],
+    })).slice(0, currentMonthIndex + 1),
+  ];
 
   // Daily users calculation (last 7 days)
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const dailyUsersMap = new Array(7).fill(0);
-  
+
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
+
   const recentUsers = await User.find({
     createdAt: { $gte: sevenDaysAgo }
   }).select('createdAt');
@@ -55,10 +62,17 @@ export const GET = AdminTryCatch(async (req) => {
     dailyUsersMap[day]++;
   });
 
-  const dailyUsers = dayNames.map((name, index) => ({
-    name,
-    users: dailyUsersMap[index]
-  }));
+  const currentDayIndex = new Date().getDay();
+  const dailyUsers = [
+    ...dayNames.map((name, index) => ({
+      name,
+      users: dailyUsersMap[index]
+    })).slice(currentDayIndex + 1),
+    ...dayNames.map((name, index) => ({
+      name,
+      users: dailyUsersMap[index]
+    })).slice(0, currentDayIndex + 1),
+  ];
 
   // Product categories count
   const productCategories = await Product.aggregate([
@@ -91,7 +105,7 @@ export const GET = AdminTryCatch(async (req) => {
     }
   ]);
 
-  // If you want to include an "Other" category for products without categories
+  // Include "Other" category for products without categories
   const otherProductsCount = await Product.countDocuments({ category: null });
   if (otherProductsCount > 0) {
     productCategories.push({ name: 'Other', value: otherProductsCount });
@@ -100,7 +114,7 @@ export const GET = AdminTryCatch(async (req) => {
   // Order trends for last 6 months
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-  
+
   const orderTrends = await Order.aggregate([
     {
       $match: {
@@ -118,7 +132,7 @@ export const GET = AdminTryCatch(async (req) => {
         name: {
           $let: {
             vars: {
-              months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+              months: monthNames
             },
             in: {
               $arrayElemAt: ['$$months', { $subtract: ['$_id', 1] }]
@@ -160,3 +174,4 @@ export const GET = AdminTryCatch(async (req) => {
     orderTrends: completeOrderTrends
   });
 });
+

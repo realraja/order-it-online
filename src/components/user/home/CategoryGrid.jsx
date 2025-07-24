@@ -5,8 +5,8 @@ import { useGetUserCategoryQuery } from '@/redux/api/user';
 import { FiChevronRight } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 
-export default function HomeContent() {
-  const [showAllCategories, setShowAllCategories] = useState(false);
+export default function CategoriesGrid({showAll = false}) {
+  const [showAllCategories, setShowAllCategories] = useState(showAll);
   const { data, isLoading, isError } = useGetUserCategoryQuery();
   const router = useRouter();
 

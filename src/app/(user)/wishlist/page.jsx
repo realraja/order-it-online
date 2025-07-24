@@ -9,7 +9,7 @@ function WishlistPage() {
   const { data, isLoading } = useGetWishlistQuery();
   const products = data?.data || [];
 
-  console.log(data)
+  // console.log(data)
 
   // Loading skeleton
   if (isLoading) {

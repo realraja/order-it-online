@@ -1,6 +1,7 @@
 import Order from "@/model/order";
 import { UserTryCatch } from "@/middleware/TryCatch";
 import { failedResponse, ResponseSuccess, successResponse } from "@/middleware/response";
+import Product from "@/model/product";
 
 export const GET = UserTryCatch(async(req)=>{
     const orders = await Order.find({user:req.id}).populate('items.product');
@@ -36,6 +37,14 @@ export const POST = UserTryCatch(async (req) => {
     totalAmount,
     coupon,
   });
+
+  await Promise.all(items.map(async(p) => {
+    const product = await Product.findById(p.product);
+
+    product.quantity -= p.quantity;
+    product.sold += p.quantity;
+    await product.save();
+  }))
 
   req.user.cart = [];
   await req.user.save();

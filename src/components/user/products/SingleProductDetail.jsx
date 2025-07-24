@@ -13,6 +13,7 @@ function SingleProductDetail({ slug }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
+  const [selectedVariant, setSelectedVariant] = useState(null)
 
   const { isUser, wishlist, cart } = useSelector(state => state.auth);
   const dispatch = useDispatch();
@@ -23,35 +24,32 @@ function SingleProductDetail({ slug }) {
 
   const router = useRouter();
 
-
-
   const product = data?.data;
-
-  // console.log(userData?.wishlist?.includes(product?._id) ?? false);
 
   useEffect(() => {
     setIsWishlisted(wishlist?.includes(product?._id) ?? false);
+    if (product?.isVariants && product?.variants?.length > 0) {
+      setSelectedVariant(product.variants[0]);
+    }
+  }, [product, data, wishlist]);
 
-  }, [product,data,wishlist]);
-
-  // console.log(wishlist?.includes(product?._id),product)
-
+  const displayProduct = selectedVariant || product;
 
   const nextImage = () => {
     setCurrentImageIndex(prev =>
-      prev === product?.images.length - 1 ? 0 : prev + 1
+      prev === displayProduct?.images.length - 1 ? 0 : prev + 1
     )
   }
 
   const prevImage = () => {
     setCurrentImageIndex(prev =>
-      prev === 0 ? product?.images.length - 1 : prev - 1
+      prev === 0 ? displayProduct?.images.length - 1 : prev - 1
     )
   }
 
   const handleQuantityChange = (value) => {
     const newValue = quantity + value
-    if (newValue > 0 && newValue <= (product?.quantity || 10)) {
+    if (newValue > 0 && newValue <= (displayProduct?.quantity || 10)) {
       setQuantity(newValue)
     }
   }
@@ -68,18 +66,16 @@ function SingleProductDetail({ slug }) {
       } catch (error) {
         console.log(error);
       }
-
-
     }
   }
 
-  // console.log(cart)
   const handleAddToCart = async () => {
-    if (cart?.find(p => p.product._id === product._id)?.quantity) return router.push('/cart')
+    const productToAdd = selectedVariant || product;
+    if (cart?.find(p => p.product?._id === productToAdd?._id)?.quantity) return router.push('/cart')
     try {
-      dispatch(addToCart({ product: product, quantity }))
+      dispatch(addToCart({ product: productToAdd, quantity }))
       toast.success('Added to cart!', { autoClose: 1000, hideProgressBar: true })
-      await AddRemoveFromCart({ product: product._id, quantity })
+      await AddRemoveFromCart({ product: productToAdd?._id, quantity })
     } catch (error) {
       console.log(error);
     }
@@ -138,13 +134,13 @@ function SingleProductDetail({ slug }) {
     >
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Image Gallery */}
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-1/2 lg:sticky bottom-0 self-start">
           <div className="relative group rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 aspect-square shadow-lg">
             <Image
               height={600}
               width={600}
-              src={product.images[currentImageIndex] || product.imageCover}
-              alt={product.name}
+              src={displayProduct?.images[currentImageIndex] || displayProduct?.imageCover}
+              alt={displayProduct?.name}
               className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
               priority
             />
@@ -164,20 +160,20 @@ function SingleProductDetail({ slug }) {
             </button>
 
             {/* Discount badge */}
-            {product.discountPrice && (
+            {displayProduct?.discountPrice && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 className="absolute top-6 right-6 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg"
               >
-                {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% OFF
+                {Math.round(((displayProduct.price - displayProduct.discountPrice) / displayProduct.price) * 100)}% OFF
               </motion.div>
             )}
           </div>
 
           {/* Thumbnails */}
           <div className="flex gap-3 mt-6 overflow-x-auto pb-4 scrollbar-hide">
-            {product.images.map((img, index) => (
+            {displayProduct?.images?.map((img, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
@@ -187,7 +183,7 @@ function SingleProductDetail({ slug }) {
                   height={96}
                   width={96}
                   src={img}
-                  alt={`${product.name} thumbnail ${index + 1}`}
+                  alt={`${displayProduct?.name} thumbnail ${index + 1}`}
                   className="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
               </button>
@@ -198,8 +194,25 @@ function SingleProductDetail({ slug }) {
         {/* Product Info */}
         <div className="w-full lg:w-1/2 space-y-8">
           <div>
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{product.brand}</span>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mt-2">{product.name}</h1>
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{displayProduct?.brand}</span>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mt-2">{displayProduct?.name}</h1>
+
+            {product?.isVariants && product?.variants?.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Variants:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((variant) => (
+                    <button
+                      key={variant._id}
+                      onClick={() => setSelectedVariant(variant)}
+                      className={`px-4 py-2 rounded-md ${selectedVariant?._id === variant._id ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}
+                    >
+                      {variant.variantName || variant._id}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center mt-4">
               <div className="flex text-yellow-400">
@@ -210,58 +223,60 @@ function SingleProductDetail({ slug }) {
               <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">(24 reviews)</span>
               <span className="mx-2 text-gray-300 dark:text-gray-600">|</span>
               <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                {product.quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                {displayProduct?.quantity > 0 ? 'In Stock' : 'Out of Stock'}
               </span>
             </div>
           </div>
 
           {/* Price */}
           <div className="space-y-2">
-            {product.discountPrice ? (
+            {displayProduct?.discountPrice ? (
               <>
                 <div className="flex items-center gap-4">
                   <span className="text-4xl font-bold text-green-600">
-                    ₹{product.discountPrice.toLocaleString()}
+                    ₹{displayProduct.discountPrice.toLocaleString()}
                   </span>
                   <span className="text-xl text-gray-500 dark:text-gray-400 line-through">
-                    ₹{product.price.toLocaleString()}
+                    ₹{displayProduct.price.toLocaleString()}
                   </span>
                 </div>
                 <span className="inline-block bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
-                  You save ₹{(product.price - product.discountPrice).toLocaleString()}!
+                  You save ₹{(displayProduct.price - displayProduct.discountPrice).toLocaleString()}!
                 </span>
               </>
             ) : (
               <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                ₹{product.price.toLocaleString()}
+                ₹{displayProduct?.price.toLocaleString()}
               </span>
             )}
           </div>
 
           {/* Quantity */}
-         {!cart?.find(p => p.product._id === product._id)?.quantity && <div className="space-y-3">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Quantity</h3>
-            <div className="flex items-center gap-6">
-              <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
-                <button
-                  onClick={() => handleQuantityChange(-1)}
-                  className="px-4 py-3 bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-lg"
-                >
-                  -
-                </button>
-                <span className="px-6  text-black dark:text-white py-3 w-16 text-center text-lg font-medium">{quantity}</span>
-                <button
-                  onClick={() => handleQuantityChange(1)}
-                  className="px-4  text-black dark:text-white py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-lg"
-                >
-                  +
-                </button>
+          {!cart?.find(p => p.product?._id === displayProduct?._id)?.quantity && (
+            <div className="space-y-3">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Quantity</h3>
+              <div className="flex items-center gap-6">
+                <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => handleQuantityChange(-1)}
+                    className="px-4 py-3 bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-lg"
+                  >
+                    -
+                  </button>
+                  <span className="px-6 text-black dark:text-white py-3 w-16 text-center text-lg font-medium">{quantity}</span>
+                  <button
+                    onClick={() => handleQuantityChange(1)}
+                    className="px-4 text-black dark:text-white py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-lg"
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {displayProduct?.quantity} available
+                </span>
               </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {product.quantity} available
-              </span>
             </div>
-          </div>}
+          )}
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-2">
@@ -271,7 +286,11 @@ function SingleProductDetail({ slug }) {
               whileTap={{ scale: 0.98 }}
               className="flex-1 bg-gradient-to-r cursor-pointer from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 px-8 rounded-xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg hover:shadow-emerald-500/20"
             >
-              {cart?.find(p => p.product._id === product._id)?.quantity?<><FiExternalLink size={20} /> Go To Cart</> :<><FiShoppingCart size={20} /> Add To Cart</> } 
+              {cart?.find(p => p?.product?._id === displayProduct?._id)?.quantity ? (
+                <><FiExternalLink size={20} /> Go To Cart</>
+              ) : (
+                <><FiShoppingCart size={20} /> Add To Cart</>
+              )}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -283,16 +302,6 @@ function SingleProductDetail({ slug }) {
             </motion.button>
           </div>
 
-          {/* Description */}
-          <div className="space-y-3">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Description</h3>
-            <div className="text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
-              {product.description}
-            </div>
-          </div>
-
-
-
 
 
           {/* Product Meta */}
@@ -300,17 +309,17 @@ function SingleProductDetail({ slug }) {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center">
                 <span className="text-gray-500 dark:text-gray-400 w-24">Category:</span>
-                <span className="text-gray-900 dark:text-white font-medium">{product.category?.name}</span>
+                <span className="text-gray-900 dark:text-white font-medium">{product.category?.name || product.category}</span>
               </div>
               <div className="flex items-center">
                 <span className="text-gray-500 dark:text-gray-400 w-24">Status:</span>
                 <span className="text-gray-900 dark:text-white font-medium">
-                  {product.status === 'active' ? 'In Stock' : 'Out of Stock'}
+                  {displayProduct?.status === 'active' ? 'In Stock' : 'Out of Stock'}
                 </span>
               </div>
               <div className="flex items-center">
                 <span className="text-gray-500 dark:text-gray-400 w-24">SKU:</span>
-                <span className="text-gray-900 dark:text-white font-medium">{product._id}</span>
+                <span className="text-gray-900 dark:text-white font-medium">{displayProduct?._id}</span>
               </div>
               <div className="flex items-center">
                 <span className="text-gray-500 dark:text-gray-400 w-24">Shipping:</span>
@@ -319,7 +328,16 @@ function SingleProductDetail({ slug }) {
             </div>
           </div>
         </div>
+
+        
       </div>
+                {/* Description */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Description</h3>
+            <div className="text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
+              {displayProduct?.description}
+            </div>
+          </div>
     </motion.div>
   )
 }

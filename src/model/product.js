@@ -1,6 +1,7 @@
 const { Schema, default: mongoose } = require("mongoose");
 
-const schema = new Schema({
+const productSchema = new Schema(
+  {
     name: {
       type: String,
       required: [true, "Product name is required"],
@@ -12,7 +13,7 @@ const schema = new Schema({
     },
     price: {
       type: Number,
-      required: [true, "Product price is required"],
+      required: [true, "Base price is required"],
       min: [0, "Price must be at least 0"],
     },
     discountPrice: {
@@ -32,7 +33,7 @@ const schema = new Schema({
     brand: String,
     quantity: {
       type: Number,
-      required: [true, "Product quantity is required"],
+      required: [true, "Total quantity is required"],
       min: [0, "Quantity cannot be negative"],
     },
     sold: {
@@ -40,9 +41,34 @@ const schema = new Schema({
       default: 0,
     },
     images: [String],
-    imageCover: {
-      type: String,
+    imageCover: String,
+
+    // Variant handling
+    isChildProduct: {
+      type: Boolean,
+      default: false,
     },
+    isVariants: {
+      type: Boolean,
+      default: false,
+    },
+    isVariantImage: {
+      type: Boolean,
+      default: false,
+    },
+    variantType: {
+      type: String, // e.g. 'color', 'size'
+    },
+    variantName: {
+      type: String, // e.g. 'Red', 'XL'
+    },
+    variants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product", // referencing other product variants
+      },
+    ],
+
     status: {
       type: String,
       enum: ["active", "inactive"],
@@ -58,7 +84,7 @@ const schema = new Schema({
   }
 );
 
-// Prevent duplicate model registration in hot reload
-const Product = mongoose.models.Product || mongoose.model("Product", schema);
+const Product =
+  mongoose.models.Product || mongoose.model("Product", productSchema);
 
 export default Product;

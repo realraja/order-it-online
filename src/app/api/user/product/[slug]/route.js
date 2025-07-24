@@ -5,7 +5,7 @@ import Product from "@/model/product";
 export const GET = SimpleTryCatch(async (req, context) => {
   const { slug = "" } = await context.params || {};
 
-  const product = await Product.findOne({slug});
+  const product = await Product.findOne({slug}).populate('variants');
 
   return ResponseSuccess("All Products Fetched successfully!", product);
 });

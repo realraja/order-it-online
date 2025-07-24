@@ -23,12 +23,12 @@ export default function Topbar() {
     const [isLogoutDialog, setIsLogoutDialog] = useState(false);
     const [isLogOutLoading, setIsLogOutLoading] = useState(false);
 
-    const { isSidebarOpen, isAdmin } = useSelector(state => state.admin)
+    const { isSidebarOpen, isAdmin,isLoading } = useSelector(state => state.admin)
     const dispatch = useDispatch();
-    const router = useRouter();
+    const router = useRouter(); 
 
     useEffect(() => {
-        if (!isAdmin) router.push('/admin/login');
+        if (!isAdmin && !isLoading) router.push('/admin/login');
     }, [isAdmin]);
 
     const handleLogout = async () => {

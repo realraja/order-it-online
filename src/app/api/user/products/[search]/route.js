@@ -10,6 +10,7 @@ export const GET = SimpleTryCatch(async (req, context) => {
     {
       $match: {
         status: "active",
+        isChildProduct:false
       },
     },
     {

@@ -121,7 +121,7 @@ if(isLoading) return null
       </Transition.Root>
 
       {/* Desktop Sidebar */}
-       <div className={` max-sm:hidden sm:hidden md:inset-y-0 md:flex md:flex-col sticky top-0 mt-6 left-0 h-screen pt-2 `}>
+       <div className={` max-sm:hidden sm:hidden md:inset-y-0 md:flex md:flex-col sticky top-0 left-0 h-screen pt-8 `}>
         <div className="flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="flex flex-1 flex-col pt-5 pb-4">
             <nav className="mt-5 flex-1 w-fit space-y-1 px-2">
@@ -132,7 +132,7 @@ if(isLoading) return null
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`group flex w-fit items-center gap-3 rounded-md px-3 py-3 text-sm font-medium ${
+                    className={`group flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium ${
                       isActive
                         ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'

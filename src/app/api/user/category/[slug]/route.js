@@ -9,7 +9,7 @@ export const GET = SimpleTryCatch(async (req,context) => {
 
   const category = await Category.findOne({slug});
 
-  const product = await Product.find({status:'active',category:category._id}).sort({ createdAt: -1 })
+  const product = await Product.find({status:'active',isChildProduct:false,category:category._id}).sort({ createdAt: -1 })
 
    const productWithRating = product.map( (p) => {
         // const productCount = await Product.countDocuments({ category: cat._id,status:'active' });

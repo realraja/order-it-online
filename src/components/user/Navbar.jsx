@@ -7,11 +7,11 @@ import { useRef, useState, useEffect } from "react";
 import { FiShoppingCart, FiSearch, FiUser, FiSettings, FiLogOut, FiHeart } from "react-icons/fi";
 import LoginDialog from "../user/dialog/LoginDialog";
 import { useDispatch, useSelector } from "react-redux";
-import DialogContext from "../ui/DailogContext";
-import { logoutUser } from "@/utils/UserActions";
-import { logout, setIsLoginDialog } from "@/redux/slicer/auth";
+import { setIsLoginDialog } from "@/redux/slicer/auth";
 import { useLazyGetUserAllProductBySearchQuery } from "@/redux/api/user";
 import { useRouter } from "next/navigation";
+import LogoutDialog from "./dialog/LogoutDialog";
+import { motion } from 'framer-motion'
 
 const Navbar = () => {
 
@@ -19,10 +19,8 @@ const Navbar = () => {
   const dispatch = useDispatch();
   // console.log(userData);
 
-  const [isSearchActive, setIsSearchActive] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
 
-  const searchRef = useRef(null);
   const accountRef = useRef(null);
   const accountMenuRef = useRef(null);
 
@@ -34,19 +32,11 @@ const Navbar = () => {
 
 
 
-  // Focus the search input when isSearchActive becomes true
-  useEffect(() => {
-    if (isSearchActive && searchRef.current) {
-      searchRef.current.focus();
-    }
-  }, [isSearchActive]);
+
 
   // Handle click outside to close search and account menu
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setIsSearchActive(false);
-      }
 
       if (
         accountRef.current &&
@@ -75,56 +65,52 @@ const Navbar = () => {
           </span>
         </Link>
 
-        <div className="w-full ml-3">
-          {isSearchActive ? (
-            <div className="max-sm:block sm:hidden">
-              <SearchItemComponent searchRef={searchRef} />
+        <div className="w-full ml-6">
+          <div className="max-sm:block sm:hidden">
+            <SearchItemComponent />
+          </div>
+          <div className="flex justify-end items-center ml-2 max-sm:hidden">
+            {/* Search Component */}
+            <div className="max-sm:hidden w-full mx-4">
+              <SearchItemComponent />
             </div>
-          ) : (
-            <div className="flex justify-end items-center ml-2">
-              {/* Search Component */}
-              <div className="max-sm:hidden w-full mx-4">
-                <SearchItemComponent searchRef={searchRef} />
-              </div>
 
-              {/* Right side icons */}
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setIsSearchActive(true)}
-                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sm:hidden max-sm:block"
+            {/* Right side icons */}
+            <div className="flex items-center space-x-4">
+              <button
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 sm:hidden max-sm:block"
+              >
+                <FiSearch className="text-gray-700 dark:text-gray-300" />
+              </button>
+              <ThemeToggle />
+
+              {/* Account icon with hoverable menu */}
+              <div className="relative">
+                <div
+                  ref={accountRef}
+                  onMouseEnter={() => { isUser && setIsAccountMenuOpen(true) }}
+                  onClick={() => { !isUser && dispatch(setIsLoginDialog(true)) }}
                 >
-                  <FiSearch className="text-gray-700 dark:text-gray-300" />
-                </button>
-                <ThemeToggle />
-
-                {/* Account icon with hoverable menu */}
-                <div className="relative">
-                  <div
-                    ref={accountRef}
-                    onMouseEnter={() => { isUser && setIsAccountMenuOpen(true) }}
-                    onClick={() => { !isUser && dispatch(setIsLoginDialog(true)) }}
-                  >
-                    <button className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                      <FiUser className="text-gray-700 dark:text-gray-300" />
-                    </button>
-                  </div>
-
-                  <DropdownMenu image={userData.imgUrl} name={userData.name} accountMenuRef={accountMenuRef} setIsAccountMenuOpen={setIsAccountMenuOpen} isAccountMenuOpen={isAccountMenuOpen} />
-
+                  <button className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <FiUser className="text-gray-700 dark:text-gray-300" />
+                  </button>
                 </div>
 
-                {/* Cart */}
-                <Link href={'/cart'} className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 relative">
-                  <FiShoppingCart className="text-gray-700 dark:text-gray-300" />
-                  {hasMounted && (
-                    <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {cart.length}
-                    </span>
-                  )}
-                </Link>
+                <DropdownMenu image={userData.imgUrl} name={userData.name} accountMenuRef={accountMenuRef} setIsAccountMenuOpen={setIsAccountMenuOpen} isAccountMenuOpen={isAccountMenuOpen} />
+
               </div>
+
+              {/* Cart */}
+              <Link href={'/cart'} className="p-2  cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 relative">
+                <FiShoppingCart className="text-gray-700 dark:text-gray-300" />
+                {hasMounted && (
+                  <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cart.length}
+                  </span>
+                )}
+              </Link>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
@@ -138,7 +124,7 @@ const Navbar = () => {
 export default Navbar;
 
 
-const SearchItemComponent = ({ searchRef }) => {
+const SearchItemComponent = () => {
   const [searchText, setSearchText] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [triggerSearch, { data: searchResponse, isFetching, error }] = useLazyGetUserAllProductBySearchQuery();
@@ -160,86 +146,115 @@ const SearchItemComponent = ({ searchRef }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchText.trim()) {
-      router.push(`/products/${searchText}`);
       setShowResults(false);
+      router.push(`/products/${searchText}`);
     }
   };
 
-  const handleProductClick = () => {
-    setShowResults(false);
-    setSearchText('');
-  };
-
-  // Extract products from response or default to empty array
   const products = searchResponse?.data || [];
 
   return (
-    <div className="relative">
-      <form onSubmit={handleSubmit}>
+    <div className="relative w-full max-w-xl mx-auto">
+      <form onSubmit={handleSubmit} className="relative">
         <input
-          ref={searchRef}
           type="text"
           value={searchText}
+          onClick={(e) => e.target.select()}
           onChange={(e) => setSearchText(e.target.value)}
           onFocus={() => searchText.trim() && setShowResults(true)}
           onBlur={() => setTimeout(() => setShowResults(false), 200)}
-          placeholder="Search for anything..."
-          className="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-1 focus:ring-green-500 dark:bg-gray-800 dark:text-white"
+          placeholder="Search for products..."
+          className="w-full pl-5 pr-12 py-3 rounded-xl text-black dark:text-white border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-green-400 focus:border-transparent shadow-sm dark:bg-gray-800  transition-all duration-200"
         />
-        <button type="submit" className="absolute right-3 top-3">
-          <FiSearch className="text-gray-400 hover:text-gray-600" />
+        <button
+          type="submit"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        >
+          <FiSearch className="w-5 h-5 text-gray-500 dark:text-gray-400 hover:text-green-500 dark:hover:text-green-400" />
         </button>
       </form>
 
       {/* Search results dropdown */}
       {showResults && (
-        <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto scrollEditclass">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.2 }}
+          className="absolute z-20 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl max-h-96 overflow-y-auto"
+        >
           {isFetching ? (
-            <div className="p-4 text-center text-gray-500">Loading...</div>
+            <div className="p-4 flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-500"></div>
+              Searching...
+            </div>
           ) : error ? (
-            <div className="p-4 text-center text-red-500">Error loading results</div>
+            <div className="p-4 text-center text-red-500 dark:text-red-400">
+              <FiAlertCircle className="inline mr-2" />
+              Error loading results
+            </div>
           ) : products.length > 0 ? (
-            <ul>
+            <ul className="divide-y divide-gray-100 dark:divide-gray-700">
               {products.map((product) => (
-                <li
+                <motion.li
                   key={product._id}
-                  className="p-3  hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-b-0"
-                  onClick={handleProductClick}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
-                  <Link href={`/product/${product.slug || product._id}`} className="block">
-                    <div className="flex items-center gap-3">
-                      {product.imageCover && (
-                        <Image
-                          height={50}
-                          width={50}
-                          src={product.imageCover}
-                          alt={product.name}
-                          className="w-10 h-10 object-cover rounded"
-                        />
-                      )}
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white line-clamp-1">
+                  <Link
+                    href={`/product/${product.slug || product._id}`}
+                    className="block p-3"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="relative flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                        {product.imageCover && (
+                          <Image
+                            fill
+                            src={product.imageCover}
+                            alt={product.name}
+                            className="object-cover"
+                            sizes="50px"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900 dark:text-white truncate">
                           {product.name}
-                        </div>
-                        <div className="flex gap-2 text-sm text-gray-500 dark:text-gray-400">
-                          <span>${product.discountPrice || product.price}</span>
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-green-600 dark:text-green-400 font-medium">
+                            ${product.discountPrice || product.price}
+                          </span>
                           {product.discountPrice && (
-                            <span className="line-through">${product.price}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 line-through">
+                              ${product.price}
+                            </span>
+                          )}
+                          {product.discountPrice && (
+                            <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-1.5 py-0.5 rounded-full">
+                              {Math.round(((product.price - product.discountPrice) / product.price * 100))}% off
+                            </span>
                           )}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                           {product.category?.name}
                         </div>
                       </div>
                     </div>
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
           ) : searchText.trim() ? (
-            <div className="p-4 text-center text-gray-500">No products found</div>
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400 flex flex-col items-center">
+              <FiSearch className="w-6 h-6 mb-2 opacity-60" />
+              <p>No products found for "{searchText}"</p>
+              <p className="text-xs mt-1">Try different keywords</p>
+            </div>
           ) : null}
-        </div>
+        </motion.div>
       )}
     </div>
   );
@@ -249,16 +264,8 @@ const SearchItemComponent = ({ searchRef }) => {
 
 const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen, image, name, isAccountMenuOpen }) => {
   const [isLogoutDialog, setIsLogoutDialog] = useState(false);
-  const [isLogOutLoading, setIsLogOutLoading] = useState(false);
-  const dispatch = useDispatch();
 
-  const handleLogout = async () => {
-    setIsLogOutLoading(true);
-    await logoutUser();
-    await dispatch(logout());
-    setIsLogOutLoading(false);
-    setIsLogoutDialog(false);
-  }
+
   return (
     <>
       <div
@@ -304,11 +311,7 @@ const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen, image, name, isAcc
 
       </div>
       {
-        isLogoutDialog && <DialogContext showDialog={isLogoutDialog} onClose={() => setIsLogoutDialog()} title="Logout" submitText="LogOut" onSubmit={handleLogout} isLoading={isLogOutLoading} Icon={FiLogOut}  >
-
-          <p className="">Are you sure you want to logout?</p>
-
-        </DialogContext>
+        isLogoutDialog && <LogoutDialog isShow={isLogoutDialog} setIsShow={setIsLogoutDialog} />
       }
     </>
   )

@@ -14,7 +14,7 @@ function ProductByCategory({ slug }) {
     }
   }, [data])
 
-  console.log(products)
+  // console.log(products)
 
 
 
@@ -34,7 +34,7 @@ function ProductByCategory({ slug }) {
     )
   }
 
-  if (!products?.length) {
+  if (!products?.length && !isLoading) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg">No products found in this category.</p>

@@ -11,10 +11,10 @@ export const GET = SimpleTryCatch(async (req, context) => {
   const skip = (page - 1) * limit;
 
   // Get total count for pagination
-  const totalProducts = await Product.countDocuments({ status: 'active' });
+  const totalProducts = await Product.countDocuments({ status: 'active',isChildProduct:false });
 
   // Fetch paginated products
-  const products = await Product.find({ status: 'active' })
+  const products = await Product.find({ status: 'active',isChildProduct:false })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
