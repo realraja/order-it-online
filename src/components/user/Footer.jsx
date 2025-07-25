@@ -126,7 +126,7 @@ const Footer = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email"
                   required
-                  className="px-4 py-3 w-full rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  className="px-4 py-3 w-full rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-light-1 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
                 <motion.button
                   type="submit"
@@ -148,7 +148,7 @@ const Footer = () => {
                   onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                   placeholder="Your email"
                   required
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900  bg-light-1 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />}
                 <input
                   type="text"
@@ -156,7 +156,7 @@ const Footer = () => {
                   onChange={(e) => setContactForm({ ...contactForm, title: e.target.value })}
                   placeholder="Your title"
                   required
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900  bg-light-1 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
 
                 <textarea
@@ -165,7 +165,7 @@ const Footer = () => {
                   placeholder="Your Message"
                   required
                   rows="3"
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900  bg-light-1 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 ></textarea>
                 <motion.button
                   type="submit"

@@ -137,7 +137,7 @@ function CartPage() {
                                                 )}
                                             </Link>
                                             <button
-                                                onClick={() => handleRemoveItem(item._id)}  // Changed to use item._id
+                                                onClick={() => handleRemoveItem(item.product?._id)}  // Changed to use item._id
                                                 className="text-gray-400 hover:text-red-500 transition-colors"
                                             >
                                                 <FiTrash2 />

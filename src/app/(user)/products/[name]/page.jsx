@@ -1,15 +1,16 @@
 import ProductBySearch from '@/components/user/products/ProductsBySearch'
 import React from 'react'
 
-export default function ProductDetailPage({ params }) {
+export default async function ProductDetailPage({ params }) {
 
-console.log(params.name)
+// console.log(params.name)
+const name = await params.name;
 
 
 
   return (
     <div className="min-h-screen m-2">
-      <ProductBySearch name={params.name} />
+      <ProductBySearch name={name} />
     </div>
   )
 }

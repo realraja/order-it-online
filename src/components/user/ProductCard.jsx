@@ -110,7 +110,7 @@ function ProductCard({ products, isLoading }) {
 
   return (
     isLoading ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {[...Array(8)].map((_, index) => (
           <ProductSkeleton key={index} />
         ))}
@@ -118,22 +118,22 @@ function ProductCard({ products, isLoading }) {
     ) : (
       <>
         {/* Sorting Controls */}
-        <div className="flex justify-end mb-6 relative">
+        <div className="flex justify-end mb-4 md:mb-6 relative">
           <motion.button
             whileHover={{ backgroundColor: '#f3f4f6' }}
             whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-2 bg-white dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600"
+            className="flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600"
             onClick={() => setShowSortOptions(!showSortOptions)}
           >
-            <FiFilter className="text-indigo-500" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            <FiFilter className="text-indigo-500 text-sm md:text-base" />
+            <span className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200">
               {sortOption === 'recent' && 'Most Recent'}
               {sortOption === 'rating-high' && 'Rating: High to Low'}
               {sortOption === 'rating-low' && 'Rating: Low to High'}
               {sortOption === 'price-high' && 'Price: High to Low'}
               {sortOption === 'price-low' && 'Price: Low to High'}
             </span>
-            <FiChevronDown className={`transition-transform ${showSortOptions ? 'rotate-180' : ''}`} />
+            <FiChevronDown className={`transition-transform text-sm md:text-base ${showSortOptions ? 'rotate-180' : ''}`} />
           </motion.button>
 
           {showSortOptions && (
@@ -141,7 +141,7 @@ function ProductCard({ products, isLoading }) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-12 right-0 bg-white dark:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 overflow-hidden z-50"
+              className="absolute top-10 md:top-12 right-0 bg-white dark:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 overflow-hidden z-50 w-48"
             >
               {[
                 { value: 'recent', label: 'Most Recent' },
@@ -153,7 +153,7 @@ function ProductCard({ products, isLoading }) {
                 <motion.button
                   key={option.value}
                   whileHover={{ backgroundColor: '#f3f4f6' }}
-                  className={`w-full text-left px-4 py-2 text-sm ${sortOption === option.value ? 'bg-indigo-50 text-indigo-600 dark:bg-gray-600 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200'}`}
+                  className={`w-full text-left px-3 py-2 text-xs md:text-sm ${sortOption === option.value ? 'bg-indigo-50 text-indigo-600 dark:bg-gray-600 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200'}`}
                   onClick={() => {
                     setSortOption(option.value)
                     setShowSortOptions(false)
@@ -170,7 +170,7 @@ function ProductCard({ products, isLoading }) {
           variants={container}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
         >
           {sortedProducts.map((product, index) => (
             <motion.div
@@ -183,7 +183,7 @@ function ProductCard({ products, isLoading }) {
               {/* Discount badge */}
               {product?.price > product?.discountPrice && (
                 <motion.div
-                  className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10"
+                  className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full z-10 md:top-3 md:left-3 md:text-xs md:px-2 md:py-1"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2 + index * 0.05 }}
@@ -193,11 +193,11 @@ function ProductCard({ products, isLoading }) {
               )}
 
               <motion.div
-                className="bg-white cursor-pointer dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full flex flex-col border border-gray-100 dark:border-gray-700"
+                className="bg-white cursor-pointer dark:bg-gray-800 rounded-lg md:rounded-xl shadow-md md:shadow-lg overflow-hidden h-full flex flex-col border border-gray-100 dark:border-gray-700"
                 whileHover={hoverEffect}
               >
                 {/* Image with hover effect */}
-                <div onClick={() => handleOnView(product?.slug)} className="relative cursor-pointer overflow-hidden h-56">
+                <div onClick={() => handleOnView(product?.slug)} className="relative cursor-pointer overflow-hidden aspect-square">
                   <motion.img
                     src={product?.imageCover}
                     alt={product?.name}
@@ -215,9 +215,9 @@ function ProductCard({ products, isLoading }) {
                       <motion.button
                         whileHover={buttonHover}
                         whileTap={buttonTap}
-                        className="bg-indigo-500 text-white px-4 py-2 rounded-full flex items-center shadow-lg"
+                        className="bg-indigo-500 text-white px-3 py-1.5 text-sm md:px-4 md:py-2 md:text-base rounded-full flex items-center shadow-lg"
                       >
-                        <FiShoppingCart className="mr-2" />
+                        <FiShoppingCart className="mr-1 md:mr-2" />
                         View
                       </motion.button>
                     </motion.div>
@@ -225,24 +225,24 @@ function ProductCard({ products, isLoading }) {
                 </div>
 
                 {/* Product details */}
-                <div className="p-5 flex-grow flex flex-col">
-                  <div onClick={() => handleOnView(product?.slug)} className="cursor-pointer mb-2">
-                    <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                <div className="p-3 md:p-4 flex-grow flex flex-col">
+                  <div onClick={() => handleOnView(product?.slug)} className="cursor-pointer mb-1 md:mb-2">
+                    <span className="text-[10px] md:text-xs font-semibold text-indigo-600 dark:text-indigo-400">
                       {product?.brand}
                     </span>
                   </div>
 
-                  <h3 onClick={() => handleOnView(product?.slug)} className="text-lg cursor-pointer font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                  <h3 onClick={() => handleOnView(product?.slug)} className="text-sm md:text-base cursor-pointer font-bold text-gray-900 dark:text-white mb-1 md:mb-2 line-clamp-2">
                     {product?.name.split('|')[0].trim()}
                   </h3>
 
                   {/* Rating */}
-                  <div className="flex items-center mb-3">
-                    <div className="flex mr-2">
+                  <div className="flex items-center mb-2 md:mb-3">
+                    <div className="flex mr-1 md:mr-2">
                       {[...Array(5)].map((_, i) => (
                         <svg
                           key={i}
-                          className={`w-4 h-4 ${i < Math.floor(product?.rating)
+                          className={`w-3 h-3 md:w-4 md:h-4 ${i < Math.floor(product?.rating)
                             ? 'text-yellow-400'
                             : 'text-gray-300 dark:text-gray-600'
                             }`}
@@ -253,7 +253,7 @@ function ProductCard({ products, isLoading }) {
                         </svg>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                       {product?.rating?.toFixed(1)}
                     </span>
                   </div>
@@ -261,24 +261,45 @@ function ProductCard({ products, isLoading }) {
                   {/* Price */}
                   <div className="mt-auto">
                     <div className="flex items-center">
-                      <span className="text-xl font-bold text-gray-900 dark:text-white">
+                      <span className="text-sm md:text-base font-bold text-gray-900 dark:text-white">
                         {formatPrice(product?.discountPrice)}
                       </span>
                       {product?.price > product?.discountPrice && (
-                        <span className="text-sm text-gray-500 line-through ml-2">
+                        <span className="text-xs md:text-sm text-gray-500 line-through ml-1 md:ml-2">
                           {formatPrice(product?.price)}
                         </span>
                       )}
                     </div>
 
-                    <motion.button
-                      whileHover={buttonHover}
-                      whileTap={buttonTap}
-                      onClick={() => handleAddToCart(product)}
-                      className="w-full mt-4 cursor-pointer bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center"
-                    >
-                      {!cart?.find(p => p.product?._id === product?._id)?.quantity?<><FiShoppingCart className="mr-2" />Add to Cart</>:<><FiEye className="mr-2" />View Cart</>}
-                    </motion.button>
+                    {product?.variants?.length <= 0 ? (
+                      <motion.button
+                        whileHover={buttonHover}
+                        whileTap={buttonTap}
+                        onClick={() => handleAddToCart(product)}
+                        className="w-full mt-2 md:mt-3 cursor-pointer bg-indigo-500 hover:bg-indigo-600 text-white py-1.5 px-3 text-xs md:text-sm md:py-2 md:px-4 rounded-lg transition duration-300 flex items-center justify-center"
+                      >
+                        {!cart?.find(p => p.product?._id === product?._id)?.quantity ? (
+                          <>
+                            <FiShoppingCart className="mr-1 md:mr-2" />
+                            Add to Cart
+                          </>
+                        ) : (
+                          <>
+                            <FiEye className="mr-1 md:mr-2" />
+                            View Cart
+                          </>
+                        )}
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        whileHover={buttonHover}
+                        whileTap={buttonTap}
+                        onClick={() => router.push(`/product/${product.slug}`)}
+                        className="w-full mt-2 md:mt-3 cursor-pointer bg-indigo-500 hover:bg-indigo-600 text-white py-1.5 px-3 text-xs md:text-sm md:py-2 md:px-4 rounded-lg transition duration-300 flex items-center justify-center"
+                      >
+                        View Product
+                      </motion.button>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -292,16 +313,14 @@ function ProductCard({ products, isLoading }) {
 
 export default ProductCard
 
-
-
 const ProductSkeleton = () => (
   <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden animate-pulse">
-    <div className="h-56 bg-gray-200 dark:bg-gray-700"></div>
-    <div className="p-4 space-y-3">
-      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-      <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-      <div className="h-9 bg-gray-200 dark:bg-gray-700 rounded mt-2"></div>
+    <div className="aspect-square bg-gray-200 dark:bg-gray-700"></div>
+    <div className="p-3 space-y-2">
+      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+      <div className="h-7 bg-gray-200 dark:bg-gray-700 rounded mt-2"></div>
     </div>
   </div>
 )

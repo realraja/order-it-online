@@ -145,7 +145,7 @@ export default function TableProducts() {
             <input
               type="text"
               placeholder="Search products..."
-              className="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
+              className="block w-full rounded-lg border border-gray-300 bg-white text-black py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -157,7 +157,7 @@ export default function TableProducts() {
                 id="category-filter"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="rounded-md border border-gray-300 bg-white text-black px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
                 <option value="all">All Categories</option>
                 {categoriesData?.data?.map((category) => (
@@ -173,7 +173,7 @@ export default function TableProducts() {
                 id="status-filter"
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                className="rounded-md border border-gray-300 bg-white text-black px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
                 <option value="all">All Statuses</option>
                 <option value="active">Active</option>
@@ -357,10 +357,8 @@ export default function TableProducts() {
                             </div>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                          {variant.name.slice(0, 26)}
-                          {variant.name.length > 26 && "..."} (
-                          {variant.variantType}: {variant.variantName})
+                        <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white"> 
+                          {variant.variantType}: {variant.variantName}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                           <div className="flex flex-col">

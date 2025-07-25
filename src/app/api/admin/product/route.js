@@ -48,6 +48,14 @@ export const POST = AdminTryCatch(async (req) => {
     return failedResponse("Please fill all required fields!");
   }
 
+    // Handle slug uniqueness
+  let slug = getSlugFromName(name);
+  const existingProduct = await Product.findOne({ slug });
+  if (existingProduct) {
+    slug += `-${generateRandomString(6)}`;
+  }
+
+
   // Handle variants
   let variants = [];
 
@@ -73,6 +81,7 @@ export const POST = AdminTryCatch(async (req) => {
           category,
           brand,
           quantity,
+          slug,
           tags,
 
           imageCover: isVariantsImage ? v.image : imageCover,
@@ -90,12 +99,6 @@ export const POST = AdminTryCatch(async (req) => {
     variants = variants.filter(Boolean);
   }
 
-  // Handle slug uniqueness
-  let slug = getSlugFromName(name);
-  const existingProduct = await Product.findOne({ slug });
-  if (existingProduct) {
-    slug += `-${generateRandomString(6)}`;
-  }
 
   // Create main product
   const product = await Product.create({
@@ -254,6 +257,10 @@ export const DELETE = AdminTryCatch(async (req) => {
       { variants: id },
       { $pull: { variants: id } }
     );
+  }else{
+    await Promise.all(product.variants.map(async(v)=>{
+      await Product.findByIdAndDelete(v);
+    }))
   }
 
   // Delete the actual product (child or parent)
