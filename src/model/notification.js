@@ -6,6 +6,7 @@ const schema = new Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    email:String,
     title: {
       type: String,
       required: [true, "Notification title is required"],

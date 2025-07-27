@@ -11,6 +11,7 @@ import AddUpdateDeleteAddressDialog from '@/components/user/Address/AddUpdateDel
 import OrderPage from '../orders/page';
 import ThemeToggle from '@/components/ui/ThemeContext';
 import LogoutDialog from '@/components/user/dialog/LogoutDialog';
+import NotificationPage from '../notifications/page';
 
 function ProfilePage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -135,6 +136,12 @@ function ProfilePage() {
                     className={`px-4 py-2 font-medium whitespace-nowrap ${activeTab === 'addresses' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-500' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}`}
                 >
                     Addresses
+                </button>
+                <button
+                    onClick={() => setActiveTab('notifications')}
+                    className={`px-4 py-2 font-medium whitespace-nowrap ${activeTab === 'notifications' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-500' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}`}
+                >
+                    Notifications
                 </button>
             </motion.div>
 
@@ -271,6 +278,10 @@ function ProfilePage() {
                                 ))}
                             </div>
                         </div>
+                    )}
+
+                     {activeTab === 'notifications' && (
+                        <NotificationPage />
                     )}
                 </motion.div>
             </AnimatePresence>

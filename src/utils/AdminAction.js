@@ -36,3 +36,10 @@ export const logoutAdmin = adminTryCatch(async () => {
   toast.success(data.message ? data.message : "admin data fetched successfully");
   return data;
 });
+
+// export const SetReadedNotification = adminTryCatch(async () => {
+//   const { data } = await axios.get("/api/admin/notification/set-readed");
+//   return data;
+// });
+
+

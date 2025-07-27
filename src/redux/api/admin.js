@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api/admin" }),
-  tagTypes: ["Users", "Category", "Image", "Product", "Dashbord", "Order","Review"],
+  tagTypes: ["Users", "Category", "Image", "Product", "Dashbord", "Order","Review","Notification"],
   endpoints: (builder) => ({
     getDashbordData: builder.query({
       query: () => ({
@@ -176,6 +176,53 @@ const adminApi = createApi({
       }),
       invalidatesTags: ["Review"],
     }),
+
+
+    getNotification: builder.query({
+      query: () => ({
+        url: "/notification",
+        credentials: "include",
+      }),
+      providesTags: ["Notification"],
+    }),
+    sendNotification: builder.mutation({
+      query: (data) => ({
+        url: "/notification",
+        method: "POST",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Notification"],
+    }),
+    updateNotification: builder.mutation({
+      query: (data) => ({
+        url: "/notification",
+        method: "PUT",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Notification"],
+    }),
+    deleteNotification: builder.mutation({
+      query: (id) => ({
+        url: `/notification`,
+        method: "DELETE",
+        credentials: "include",
+        body: id,
+      }),
+      invalidatesTags: ["Notification"],
+    }),
+
+
+    setNotificationReaded: builder.mutation({
+      query: (data) => ({
+        url: "/notification/set-readed",
+        method: "PUT",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Notification"],
+    }),
   }),
 });
 
@@ -207,5 +254,15 @@ export const {
 
   useGetReviewQuery,
   useUpdateReviewMutation,
+
+
+  useGetNotificationQuery,
+  useSendNotificationMutation,
+  useUpdateNotificationMutation,
+  useDeleteNotificationMutation,
+  useSetNotificationReadedMutation,
+
+
+
 } = adminApi;
 export default adminApi;

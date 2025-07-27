@@ -1,6 +1,6 @@
 "use client";
 import ThemeToggle from "@/components/ui/ThemeContext";
-import { ListOrdered } from "lucide-react";
+import { Bell, ListOrdered } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
@@ -299,6 +299,11 @@ const DropdownMenu = ({ accountMenuRef, setIsAccountMenuOpen, image, name, isAcc
           <Link href={'/orders'} className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
             <ListOrdered className="w-5 h-5 mr-3 text-gray-400" />
             Orders
+          </Link>
+
+          <Link href={'/notifications'} className="flex items-center cursor-pointer w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <Bell className="w-5 h-5 mr-3 text-gray-400" />
+            Notifications
           </Link>
 
           <div className="border-t border-gray-100 dark:border-gray-700"></div>

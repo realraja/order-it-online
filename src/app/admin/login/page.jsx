@@ -29,6 +29,7 @@ export default function LoginPage() {
            await LoginAdmin({password});
             // console.log(data);
             dispatch(login());
+            router.push('/admin');
         } catch (err) {
             setError('An error occurred. Please try again.');
         } finally {

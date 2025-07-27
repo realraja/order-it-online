@@ -41,6 +41,7 @@ const LoginDialog = ({ show, onClose }) => {
       const { data } = await LoginUser({ email, password,cart:loginCart });
       if (data) {
         await dispatch(login(data));
+        router.push('/');
         onClose() // Close the dialog on successful login
       }
 

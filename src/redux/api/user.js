@@ -157,6 +157,15 @@ const userApi = createApi({
       }),
       invalidatesTags: ["Review"],
     }),
+
+
+    getNotifications: builder.query({
+      query: () => ({
+        url: "/notification",
+        credentials: "include",
+      }),
+      providesTags: [],
+    }),
   }),
 });
 
@@ -187,5 +196,7 @@ export const {
   useCancelOrderMutation,
 
   useAddReviewMutation,
+
+  useGetNotificationsQuery,
 } = userApi;
 export default userApi;

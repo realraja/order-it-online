@@ -28,7 +28,7 @@ const Footer = () => {
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     setIsLoadingSubmit(true)
-    await SendNotificationToAdmin({ title: contactForm.title, message: contactForm.message, email: isUser ? contactForm.email : userData.email, user: isUser ? userData._id : null })
+    await SendNotificationToAdmin({ title: contactForm.title, message: contactForm.message, email: !isUser ? contactForm.email : userData.email, user: isUser ? userData._id : null })
     setContactForm({ title: "", email: "", message: "" });
     setIsLoadingSubmit(false);
 

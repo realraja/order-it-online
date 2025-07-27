@@ -14,6 +14,7 @@ import {
   BarChart2,
   Settings,
   Image,
+  Bell,
 } from 'lucide-react';
 import { setIsSidebarOpen } from '@/redux/slicer/admin';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,7 +27,7 @@ const navItems = [
   { name: 'Categories', href: '/admin/categories', icon: Tag },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },
   { name: 'Images', href: '/admin/images', icon: Image },
-  // { name: 'Reports', href: '/admin/reports', icon: BarChart2 },
+  { name: 'Notifications', href: '/admin/notifications', icon: Bell },
   // { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 

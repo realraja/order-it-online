@@ -17,6 +17,7 @@
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "crypto": "^1.0.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.23.5",
     "google-auth-library": "^10.1.0",
     "jsonwebtoken": "^9.0.2",
