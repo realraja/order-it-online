@@ -104,7 +104,7 @@ function CartPage() {
                         <AnimatePresence>
                             {cart?.map((item) => (
                                 <motion.div
-                                    key={item._id}  // Changed to use item._id instead of product._id
+                                    key={`${item.product?._id}-${item.product?.variantName || ''}`}  // Changed to use item._id instead of product._id
                                     layout
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}

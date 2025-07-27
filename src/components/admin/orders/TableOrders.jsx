@@ -1,11 +1,12 @@
 'use client';
 import { Fragment, useState, useEffect } from 'react';
 import { Search, ChevronDown, Eye, Truck, CheckCircle, X, Trash2, RefreshCw, CreditCard } from 'lucide-react';
-import { Menu, Transition } from '@headlessui/react';
+import { Menu } from '@headlessui/react';
 import { useDeleteOrderMutation, useGetOrderQuery, useUpdateOrderMutation} from '@/redux/api/admin';
 import { useAsyncMutation } from '@/hook/mutationHook';
 import DialogContext from '@/components/ui/DailogContext';
 import ViewOrderDetailsDialog from './ViewOrderDialog';
+import Image from 'next/image';
 
 export default function TableOrders() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,7 +28,7 @@ export default function TableOrders() {
   const filteredOrders = orders.filter((order) => {
     if (statusFilter !== 'all' && order.orderStatus !== statusFilter) return false;
     return (
-      order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.item.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
@@ -47,33 +48,29 @@ export default function TableOrders() {
     { value: 'refunded', label: 'Refunded', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' }
   ];
 
-const getStatusBadge = (status) => {
-  const statusMap = {
-    pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    processing: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    shipped: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-    delivered: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+  const getStatusBadge = (status) => {
+    const statusMap = {
+      pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+      processing: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+      shipped: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+      delivered: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+      cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+    };
+
+    return `inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusMap[status] || statusMap['cancelled']}`;
   };
 
-  return `inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusMap[status] || statusMap['cancelled']}`;
-};
-
-
-  const handleStatusChange = async (orderId, newStatus,paymentStatus) => {
-
+  const handleStatusChange = async (orderId, newStatus, paymentStatus) => {
     try {
       await updateOrder({ 
         id: orderId, 
         orderStatus: newStatus,
         paymentStatus
-      })
+      });
     } catch (error) {
       console.error('Failed to update order status:', error);
     }
   };
-
- 
 
   const handleDeleteOrder = async (orderId) => {
     await deleteOrder({id:orderId});
@@ -109,43 +106,33 @@ const getStatusBadge = (status) => {
                 <ChevronDown className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
               </Menu.Button>
             </div>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700">
-                <div className="py-1">
-                  <Menu.Item>
+            <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700">
+              <div className="py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      className={`${active ? 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white' : ''} block w-full px-4 py-2 text-left text-sm`}
+                      onClick={() => setStatusFilter('all')}
+                    >
+                      All Statuses
+                    </button>
+                  )}
+                </Menu.Item>
+                {statusOptions.map((option) => (
+                  <Menu.Item key={option.value}>
                     {({ active }) => (
                       <button
-                        className={`${active ? 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white' : ''} block w-full px-4 py-2 text-left text-sm`}
-                        onClick={() => setStatusFilter('all')}
+                        className={`${active ? 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white' : ''} flex items-center w-full px-4 py-2 text-left text-sm`}
+                        onClick={() => setStatusFilter(option.value)}
                       >
-                        All Statuses
+                        <span className="mr-2">{option.icon}</span>
+                        {option.label}
                       </button>
                     )}
                   </Menu.Item>
-                  {statusOptions.map((option) => (
-                    <Menu.Item key={option.value}>
-                      {({ active }) => (
-                        <button
-                          className={`${active ? 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white' : ''} flex items-center w-full px-4 py-2 text-left text-sm`}
-                          onClick={() => setStatusFilter(option.value)}
-                        >
-                          <span className="mr-2">{option.icon}</span>
-                          {option.label}
-                        </button>
-                      )}
-                    </Menu.Item>
-                  ))}
-                </div>
-              </Menu.Items>
-            </Transition>
+                ))}
+              </div>
+            </Menu.Items>
           </Menu>
         </div>
       </div>
@@ -156,16 +143,13 @@ const getStatusBadge = (status) => {
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                Order ID
+                Item
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                 Customer
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                 Date
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
-                Total
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                 Status
@@ -181,13 +165,27 @@ const getStatusBadge = (status) => {
           <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
             {filteredOrders.map((order) => (
               <tr key={order._id}>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900 dark:text-white">#{order._id.slice(-8).toUpperCase()}</div>
+                <td className="whitespace-nowrap px-6 py-4 ">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10">
+                      <Image height={50} width={50} className="h-10 w-10 rounded-full" src={order.item.product.imageCover} alt={order.user.name} />
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    {order.item.product.name.length > 20 
+                      ? `${order.item.product.name.substring(0, 20)}...` 
+                      : order.item.product.name}
+                  </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-300">₹{order.totalAmount} × {order.item.quantity}</div>
+                    </div>
+                  </div>
+                  
+                  
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
-                      <img className="h-10 w-10 rounded-full" src={order.user.imgUrl} alt={order.user.name} />
+                      <Image height={50} width={50} className="h-10 w-10 rounded-full" src={order.user.imgUrl} alt={order.user.name} />
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900 dark:text-white">{order.user.name}</div>
@@ -201,11 +199,6 @@ const getStatusBadge = (status) => {
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900 dark:text-white">
-                    ₹{order.totalAmount.toFixed(2)}
-                  </div>
-                </td>
-                <td className="whitespace-nowrap  px-6 py-4">
                   <Menu as="div" className="relative inline-block text-left">
                     <div>
                       <Menu.Button className={`${getStatusBadge(order.orderStatus)} cursor-pointer inline-flex items-center`}>
@@ -216,33 +209,23 @@ const getStatusBadge = (status) => {
                         <ChevronDown className="ml-1 h-4 w-4" aria-hidden="true" />
                       </Menu.Button>
                     </div>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700">
-                        <div className="py-1">
-                          {statusOptions.map((option) => (
-                            <Menu.Item key={option.value}>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleStatusChange(order._id, option.value,order.paymentStatus)}
-                                  className={`${active ? 'bg-gray-100 dark:bg-gray-600' : ''} flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200`}
-                                >
-                                  <span className="mr-2">{option.icon}</span>
-                                  {option.label}
-                                </button>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
+                    <Menu.Items className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700">
+                      <div className="py-1">
+                        {statusOptions.map((option) => (
+                          <Menu.Item key={option.value}>
+                            {({ active }) => (
+                              <button
+                                onClick={() => handleStatusChange(order._id, option.value, order.paymentStatus)}
+                                className={`${active ? 'bg-gray-100 dark:bg-gray-600' : ''} flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200`}
+                              >
+                                <span className="mr-2">{option.icon}</span>
+                                {option.label}
+                              </button>
+                            )}
+                          </Menu.Item>
+                        ))}
+                      </div>
+                    </Menu.Items>
                   </Menu>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
@@ -259,43 +242,33 @@ const getStatusBadge = (status) => {
                         <ChevronDown className="ml-1 h-4 w-4" aria-hidden="true" />
                       </Menu.Button>
                     </div>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700">
-                        <div className="py-1">
-                          {paymentStatusOptions.map((option) => (
-                            <Menu.Item key={option.value}>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => handleStatusChange(order._id,order.orderStatus, option.value)}
-                                  className={`${active ? 'bg-gray-100 dark:bg-gray-600' : ''} flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200`}
-                                >
-                                  <span className={`mr-2 h-2 w-2 rounded-full ${option.color.split(' ')[0]}`} />
-                                  {option.label}
-                                </button>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
+                    <Menu.Items className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-700">
+                      <div className="py-1">
+                        {paymentStatusOptions.map((option) => (
+                          <Menu.Item key={option.value}>
+                            {({ active }) => (
+                              <button
+                                onClick={() => handleStatusChange(order._id, order.orderStatus, option.value)}
+                                className={`${active ? 'bg-gray-100 dark:bg-gray-600' : ''} flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200`}
+                              >
+                                <span className={`mr-2 h-2 w-2 rounded-full ${option.color.split(' ')[0]}`} />
+                                {option.label}
+                              </button>
+                            )}
+                          </Menu.Item>
+                        ))}
+                      </div>
+                    </Menu.Items>
                   </Menu>
                 </td>
                 <td className="whitespace-nowrap gap-3 flex justify-center items-center px-6 py-4 text-right text-sm font-medium">
-                   <button
-                        onClick={() => setViewOrderDialog({data:order,show:true})}
-                        className="text-indigo-600 cursor-pointer hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
-                        title="View order"
-                      >
-                        <Eye className="h-5 w-5" />
-                      </button>
+                  <button
+                    onClick={() => setViewOrderDialog({data:order,show:true})}
+                    className="text-indigo-600 cursor-pointer hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                    title="View order"
+                  >
+                    <Eye className="h-5 w-5" />
+                  </button>
                   <button
                     onClick={() => setConfirmDeleteDialog({deleteId:order._id,show:true})}
                     className="text-red-600 hover:text-red-900 cursor-pointer dark:text-red-400 dark:hover:text-red-300"
@@ -318,12 +291,24 @@ const getStatusBadge = (status) => {
         </div>
       </div>
 
-      {
-        confirmDeleteDialog.show && <DialogContext showDialog={confirmDeleteDialog.show} onClose={()=> setConfirmDeleteDialog({show:false,deleteId:''})} onSubmit={()=> {handleDeleteOrder(confirmDeleteDialog.deleteId); setConfirmDeleteDialog({show:false,deleteId:''})}} title={'Delete Order'} Icon={Trash2} submitText='Delete' children={<div>Are you Shore want to delete?</div>} />
-      }
-      {
-        viewOrderDialog.show && <ViewOrderDetailsDialog isOpen={viewOrderDialog.show} data={viewOrderDialog.data} onClose={()=> setViewOrderDialog({show:false,data:{}})} />
-      }
+      {confirmDeleteDialog.show && (
+        <DialogContext 
+          showDialog={confirmDeleteDialog.show} 
+          onClose={()=> setConfirmDeleteDialog({show:false,deleteId:''})} 
+          onSubmit={()=> {handleDeleteOrder(confirmDeleteDialog.deleteId); setConfirmDeleteDialog({show:false,deleteId:''})}} 
+          title={'Delete Order'} 
+          Icon={Trash2} 
+          submitText='Delete' 
+          children={<div>Are you sure you want to delete?</div>} 
+        />
+      )}
+      {viewOrderDialog.show && (
+        <ViewOrderDetailsDialog 
+          isOpen={viewOrderDialog.show} 
+          data={viewOrderDialog.data} 
+          onClose={()=> setViewOrderDialog({show:false,data:{}})} 
+        />
+      )}
     </div>
   );
 }

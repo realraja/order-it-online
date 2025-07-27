@@ -237,7 +237,7 @@ function ProductCard({ products, isLoading }) {
                   </h3>
 
                   {/* Rating */}
-                  <div className="flex items-center mb-2 md:mb-3">
+                  {product?.rating > 0 && <div className="flex items-center mb-2 md:mb-3">
                     <div className="flex mr-1 md:mr-2">
                       {[...Array(5)].map((_, i) => (
                         <svg
@@ -254,9 +254,9 @@ function ProductCard({ products, isLoading }) {
                       ))}
                     </div>
                     <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
-                      {product?.rating?.toFixed(1)}
+                      {product?.rating}
                     </span>
-                  </div>
+                  </div>}
 
                   {/* Price */}
                   <div className="mt-auto">

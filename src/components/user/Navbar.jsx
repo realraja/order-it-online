@@ -4,7 +4,7 @@ import { ListOrdered } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
-import { FiShoppingCart, FiSearch, FiUser, FiSettings, FiLogOut, FiHeart } from "react-icons/fi";
+import { FiShoppingCart, FiSearch, FiUser, FiSettings, FiLogOut, FiHeart, FiAlertCircle } from "react-icons/fi";
 import LoginDialog from "../user/dialog/LoginDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsLoginDialog } from "@/redux/slicer/auth";

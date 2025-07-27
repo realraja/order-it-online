@@ -268,7 +268,7 @@ export default function TableUsers() {
                   />
                   <InfoCard
                     label="Cart Items"
-                    value={showUserInfo.data.cartItems?.length || 0}
+                    value={showUserInfo.data.cart?.length || 0}
                     icon={<ShoppingCart className="h-4 w-4" />}
                   />
                   <InfoCard

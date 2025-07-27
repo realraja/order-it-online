@@ -73,7 +73,7 @@ const FeaturedProducts = () => {
           </motion.div>
 
 
-          <ProductCard products={products.slice(0, visibleProducts)} isLoading={isLoading} />
+          <ProductCard products={products?.slice(0, visibleProducts)} isLoading={isLoading} />
 
           {visibleProducts < products.length && (
                 <motion.div

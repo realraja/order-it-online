@@ -1,17 +1,43 @@
 'use client'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useGetOrdersQuery } from '@/redux/api/user'
-import { FiPackage, FiCalendar, FiMapPin, FiCreditCard, FiClock, FiCheckCircle, FiTruck, FiChevronDown, FiChevronUp, FiShoppingBag, FiArrowRight } from 'react-icons/fi'
+import { useCancelOrderMutation, useGetOrdersQuery } from '@/redux/api/user'
+import { 
+  FiPackage, 
+  FiCalendar, 
+  FiMapPin, 
+  FiCreditCard, 
+  FiClock, 
+  FiCheckCircle, 
+  FiTruck, 
+  FiChevronDown, 
+  FiChevronUp, 
+  FiShoppingBag, 
+  FiArrowRight 
+} from 'react-icons/fi'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
+import AddReviewDialog from '@/components/user/review/AddReviewDialog'
+import { useAsyncMutation } from '@/hook/mutationHook'
+import DialogContext from '@/components/ui/DailogContext'
+import { FcCancel } from 'react-icons/fc'
 
 function OrderPage() {
   const { data, isLoading } = useGetOrdersQuery()
   const orders = data?.data || []
   const [expandedOrders, setExpandedOrders] = useState({})
+  const [isAddReviewDialog, setIsAddReviewDialog] = useState({show:false, productSlug:'',orderId:''})
+  const [isConfirmCancelDialog, setIsConfirmCancelDialog] = useState({show:false, id:''})
 
-  // Enhanced status configuration with gradient colors
+  const [cancelOrder] = useAsyncMutation(useCancelOrderMutation)
+
+  const handleCancelOrder = async() => {
+    setIsConfirmCancelDialog(prev => ({...prev, show: false}))
+    await cancelOrder({id: isConfirmCancelDialog.id})
+    setIsConfirmCancelDialog({show: false, id: ''})    
+  }
+
+  // Status configuration
   const statusConfig = {
     pending: { 
       bg: 'bg-gradient-to-r from-yellow-400 to-yellow-500',
@@ -132,10 +158,7 @@ function OrderPage() {
         </motion.div>
       ) : (
         <AnimatePresence>
-          <motion.div
-            layout
-            className="grid grid-cols-1 gap-6"
-          >
+          <motion.div layout className="grid grid-cols-1 gap-6">
             {orders.map((order) => (
               <motion.div
                 key={order._id}
@@ -146,12 +169,9 @@ function OrderPage() {
                 transition={{ duration: 0.3 }}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all"
               >
-                {/* Order Header - Always visible */}
                 <motion.div 
-                  className={`p-6 ${expandedOrders[order._id] ? 'border-b border-gray-100 dark:border-gray-700' : ''} cursor-pointer transition-colors`}
-                  onClick={() => toggleOrder(order._id)}
-                  whileHover={{ backgroundColor: 'rgba(249, 250, 251, 0.8)' }}
-                  whileTap={{ scale: 0.98 }}
+                  className={`p-6 ${expandedOrders[order._id] ? 'border-b border-gray-100 dark:border-gray-700' : ''} transition-colors`}
+                  // whileTap={{ scale: 0.98 }}
                 >
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex items-center gap-4">
@@ -168,18 +188,42 @@ function OrderPage() {
                             day: 'numeric'
                           })}
                           <span className="mx-1.5">•</span>
-                          {order.items.reduce((sum, item) => sum + item.quantity, 0)} items
+                          {order.item.quantity} item{order.item.quantity > 1 ? 's' : ''}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
+
+                      {order?.orderStatus === 'pending' && (
+                        <button 
+                          onClick={() => setIsConfirmCancelDialog({show: true, id: order._id})}
+                          className="text-red-500 cursor-pointer hover:text-red-700 text-sm font-medium"
+                        >
+                          Cancel Order
+                        </button>
+                      )}
+                      {order?.orderStatus === 'delivered' && !order.review && (
+                        <button 
+                          onClick={() => setIsAddReviewDialog({show: true, productSlug: order.item.product?.slug,orderId:order._id})}
+                          className="text-indigo-500 cursor-pointer hover:text-indigo-700 text-sm font-medium"
+                        >
+                          Review
+                        </button>
+                      )}
+
+                      {order.review && <p className={`${order.review.status === 'pending'? 'text-yellow-300': order.review.status === 'approved'? 'text-green-1':'text-shadow-rose-600'}`}>Review Status : {order.review.status}</p>}
+
+
+                      
                       <div className={`px-3 py-1 rounded-full text-sm font-medium ${statusConfig[order.orderStatus]?.textColor || 'text-gray-800 dark:text-gray-200'} bg-opacity-20 ${statusConfig[order.orderStatus]?.bg || 'bg-gray-500'}`}>
                         {statusConfig[order.orderStatus]?.text || order.orderStatus}
                       </div>
+                      
                       <motion.div
                         animate={{ rotate: expandedOrders[order._id] ? 180 : 0 }}
                         transition={{ duration: 0.2 }}
-                        className="text-gray-500"
+                        className="text-gray-500 cursor-pointer p-3"
+                        onClick={() => toggleOrder(order._id)}
                       >
                         {expandedOrders[order._id] ? (
                           <FiChevronUp className="text-current" />
@@ -191,7 +235,6 @@ function OrderPage() {
                   </div>
                 </motion.div>
 
-                {/* Collapsible Content */}
                 <AnimatePresence>
                   {expandedOrders[order._id] && (
                     <motion.div
@@ -201,59 +244,59 @@ function OrderPage() {
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="overflow-hidden"
                     >
-                      {/* Order Items */}
                       <div className="p-6">
                         <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-4">Items in this order</h4>
                         <div className="space-y-4">
-                          {order.items.map((item) => (
-                            <motion.div
-                              key={item._id}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 0.1 }}
-                              className="flex gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                            className="flex gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                          >
+                            <Link 
+                              href={`/product/${order.item.product.slug || order.item.product._id}`}
+                              className="flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-700"
                             >
+                              <Image
+                                src={order.item.product.imageCover}
+                                alt={order.item.product.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </Link>
+                            <div className="flex-1 min-w-0">
                               <Link 
-                                href={`/product/${item.product.slug}`}
-                                className="flex-shrink-0 relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+                                href={`/product/${order.item.product.slug || order.item.product._id}`}
+                                className="font-medium text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 truncate block"
                               >
-                                <Image
-                                  src={item.product.imageCover}
-                                  alt={item.product.name}
-                                  fill
-                                  className="object-cover"
-                                />
+                                {order.item.product.name}
                               </Link>
-                              <div className="flex-1 min-w-0">
-                                <Link 
-                                  href={`/product/${item.product.slug}`}
-                                  className="font-medium text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 truncate block"
-                                >
-                                  {item.product.name}
-                                </Link>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{item.product.brand}</p>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-sm font-medium">
-                                    ₹{item.product.discountPrice || item.product.price}
-                                  </span>
-                                  {item.product.discountPrice && (
-                                    <span className="text-xs text-gray-500 dark:text-gray-400 line-through">
-                                      ₹{item.product.price}
-                                    </span>
-                                  )}
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">× {item.quantity}</span>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <p className="font-medium">
-                                  ₹{((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                              <p className="text-sm text-gray-500 dark:text-gray-400">{order.item.product.brand}</p>
+                              {order.item.product.variantName && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {order.item.product.variantName}
                                 </p>
+                              )}
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-sm font-medium">
+                                  ₹{order.item.product.discountPrice || order.item.product.price}
+                                </span>
+                                {order.item.product.discountPrice && (
+                                  <span className="text-xs text-gray-500 dark:text-gray-400 line-through">
+                                    ₹{order.item.product.price}
+                                  </span>
+                                )}
+                                <span className="text-xs text-gray-500 dark:text-gray-400">× {order.item.quantity}</span>
                               </div>
-                            </motion.div>
-                          ))}
+                            </div>
+                            <div className="text-right">
+                              <p className="font-medium">
+                                ₹{((order.item.product.discountPrice || order.item.product.price) * order.item.quantity).toFixed(2)}
+                              </p>
+                            </div>
+                          </motion.div>
                         </div>
 
-                        {/* Order Details */}
                         <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
                             <h5 className="font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
@@ -293,7 +336,7 @@ function OrderPage() {
                               <div className="flex justify-between mb-2">
                                 <span className="text-gray-600 dark:text-gray-300">Items:</span>
                                 <span className="font-medium">
-                                  {order.items.reduce((sum, item) => sum + item.quantity, 0)}
+                                  {order.item.quantity}
                                 </span>
                               </div>
                               <div className="flex justify-between pt-2 mt-2 border-t border-gray-200 dark:border-gray-600">
@@ -313,6 +356,27 @@ function OrderPage() {
             ))}
           </motion.div>
         </AnimatePresence>
+      )}
+
+      {isAddReviewDialog.show && (
+        <AddReviewDialog 
+          show={isAddReviewDialog.show} 
+          onClose={() => setIsAddReviewDialog({show: false, productSlug: '',orderId:''})} 
+          productSlug={isAddReviewDialog.productSlug}
+          orderId={isAddReviewDialog.orderId}
+        />
+      )}
+
+      {isConfirmCancelDialog.show && (
+        <DialogContext 
+          showDialog={isConfirmCancelDialog.show} 
+          onClose={() => setIsConfirmCancelDialog({show: false, id: ''})} 
+          title="Cancel Order" 
+          Icon={FcCancel} 
+          onSubmit={handleCancelOrder}
+        >
+          Are you sure you want to cancel this order?
+        </DialogContext>
       )}
     </motion.div>
   )

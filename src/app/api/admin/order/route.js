@@ -3,7 +3,7 @@ import { AdminTryCatch } from "@/middleware/TryCatch";
 import Order from "@/model/order";
 
 export const GET = AdminTryCatch(async (req) => {
-  const order = await Order.find().populate('user').populate('items.product').sort({ createdAt: -1 });
+  const order = await Order.find().populate('user').populate('item.product').sort({ createdAt: -1 });
 
   return ResponseSuccess("All orders Fetched successfully!", order);
 });

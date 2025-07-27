@@ -1,5 +1,5 @@
 import connectDB from "@/database/connectDB";
-import { failedResponse, ResponseFailed, ResponseFailedError } from "./response";
+import { errorResponse, failedResponse, ResponseFailed, ResponseFailedError } from "./response";
 import { verifyToken } from "./jwt";
 import User from "@/model/user";
 
@@ -92,7 +92,7 @@ export const SimpleTryCatch = (passedFunction) => async (req, context) => {
     return await passedFunction(req, context); // <== forward context (e.g. { params })
   } catch (error) {
     console.log("try catch error: " + error);
-    return ResponseFailedError("Internal Server Error", error.message);
+    return errorResponse("Internal Server Error", error.message);
   }
 };
 

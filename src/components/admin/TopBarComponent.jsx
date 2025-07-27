@@ -1,7 +1,7 @@
 "use client"
 import { Fragment, useEffect, useState } from 'react';
 import { Menu as LucideMenu, Bell, ChevronDown } from 'lucide-react';
-import { Menu, Transition } from '@headlessui/react';
+// import { Menu, Transition } from '@headlessui/react';
 import ThemeToggle from '../ui/ThemeContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, setIsSidebarOpen } from '@/redux/slicer/admin';
@@ -16,12 +16,14 @@ import Link from 'next/link';
 
 export default function Topbar() {
     // const { theme, toggleTheme } = useTheme();
-    const [notifications, setNotifications] = useState([
-        { id: 1, message: 'New order received', time: '5 mins ago', read: false },
-        { id: 2, message: 'New user registered', time: '1 hour ago', read: false },
-    ]);
+    // const [notifications, setNotifications] = useState([
+    //     { id: 1, message: 'New order received', time: '5 mins ago', read: false },
+    //     { id: 2, message: 'New user registered', time: '1 hour ago', read: false },
+    // ]);
     const [isLogoutDialog, setIsLogoutDialog] = useState(false);
     const [isLogOutLoading, setIsLogOutLoading] = useState(false);
+
+    // console.log('running')
 
     const { isSidebarOpen, isAdmin,isLoading } = useSelector(state => state.admin)
     const dispatch = useDispatch();
@@ -63,7 +65,7 @@ export default function Topbar() {
                     <ThemeToggle />
 
                     {/* Notifications dropdown */}
-                    <Menu as="div" className="relative ml-3">
+                    {/* <Menu as="div" className="relative ml-3">
                         <div>
                             <Menu.Button className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-gray-800">
                                 <span className="sr-only">Open notifications</span>
@@ -113,7 +115,7 @@ export default function Topbar() {
                                 </Menu.Item>
                             </Menu.Items>
                         </Transition>
-                    </Menu>
+                    </Menu> */}
 
                     {/* Profile dropdown */}
                     <button onClick={() => setIsLogoutDialog(true)} className='text-red-1 mx-4 cursor-pointer'><FiLogOut className="size-6" /></button>

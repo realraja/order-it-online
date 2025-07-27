@@ -18,6 +18,8 @@ export default function ProductListingPage() {
     limit: productPerPageLimit,
   })
 
+  // console.log(data)
+
   // When data changes, update products list
   useEffect(() => {
     if (data) {

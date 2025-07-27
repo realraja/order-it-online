@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api/user" }),
-  tagTypes: ["Category", "Product", "Wishlist","Cart","Address","Order"],
+  tagTypes: ["Category", "Product", "Wishlist","Cart","Address","Order","Review"],
   endpoints: (builder) => ({
     getUserCategory: builder.query({
       query: () => ({
@@ -18,7 +18,7 @@ const userApi = createApi({
         url: "/home/products",
         credentials: "include",
       }),
-      providesTags: ["Product"],
+      providesTags: ["Product","Review"],
     }),
 
     getUserProductByCategory: builder.query({
@@ -26,7 +26,7 @@ const userApi = createApi({
         url: `/category/${slug}`,
         credentials: "include",
       }),
-      providesTags: ["Product", "Category"],
+      providesTags: ["Product", "Category","Review"],
     }),
 
     getUserAllProductByPageAndLimit: builder.query({
@@ -34,7 +34,7 @@ const userApi = createApi({
         url: `/products/?page=${page}&limit=${limit}`,
         credentials: "include",
       }),
-      providesTags: ["Product"],
+      providesTags: ["Product","Review"],
     }),
 
     getUserAllProductBySearch: builder.query({
@@ -42,7 +42,7 @@ const userApi = createApi({
         url: `/products/${query}`,
         credentials: "include",
       }),
-      providesTags: ["Product"],
+      providesTags: ["Product","Review"],
     }),
 
     getUserProductBySlug: builder.query({
@@ -50,7 +50,7 @@ const userApi = createApi({
         url: `/product/${slug}`,
         credentials: "include",
       }),
-      providesTags: ["Product"],
+      providesTags: ["Product","Review"],
     }),
 
 
@@ -59,7 +59,7 @@ const userApi = createApi({
         url: "/wishlist",
         credentials: "include",
       }),
-      providesTags: ["Wishlist"],
+      providesTags: ["Wishlist","Review"],
     }),
     toggleWishlist: builder.mutation({
       query: (data) => ({
@@ -126,7 +126,7 @@ const userApi = createApi({
         url: "/order",
         credentials: "include",
       }),
-      providesTags: ["Order"],
+      providesTags: ["Order","Review"],
     }),
     PlaceOrder: builder.mutation({
       query: (data) => ({
@@ -136,6 +136,26 @@ const userApi = createApi({
         body: data,
       }),
       invalidatesTags: ["Order"],
+    }),
+    cancelOrder: builder.mutation({
+      query: (data) => ({
+        url: "/order",
+        method: "DELETE",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Order"],
+    }),
+
+
+    addReview: builder.mutation({
+      query: (data) => ({
+        url: "/review",
+        method: "POST",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Review"],
     }),
   }),
 });
@@ -163,6 +183,9 @@ export const {
 
   
   useGetOrdersQuery,
-  usePlaceOrderMutation
+  usePlaceOrderMutation,
+  useCancelOrderMutation,
+
+  useAddReviewMutation,
 } = userApi;
 export default userApi;

@@ -173,39 +173,35 @@ function ViewOrderDetailsDialog({ data, isOpen, onClose }) {
           transition={{ delay: 0.5 }}
           className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 shadow-sm"
         >
-          <h3 className="font-semibold text-lg mb-4">Order Items</h3>
+          <h3 className="font-semibold text-lg mb-4">Order Item</h3>
           <div className="space-y-4">
             <AnimatePresence>
-              {data.items.map((item, index) => (
                 <motion.div
-                  key={index}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * index }}
                   className="flex items-center gap-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors"
                 >
                   <motion.div whileHover={{ scale: 1.05 }} className="flex-shrink-0 relative h-16 w-16 rounded-md overflow-hidden border border-gray-200 dark:border-gray-700">
                     <img 
-                      src={item.product.imageCover} 
-                      alt={item.product.name} 
+                      src={data.item.product.imageCover} 
+                      alt={data.item.product.name} 
                       className="h-full w-full object-cover"
                     />
                   </motion.div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{item.product.name}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{item.product.brand}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Qty: {item.quantity}</p>
+                    <p className="font-medium truncate">{data.item.product.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{data.item.product.brand}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Qty: {data.item.quantity}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">₹{(item.product.discountPrice || item.product.price).toFixed(2)}</p>
-                    {item.product.discountPrice && (
+                    <p className="font-medium">₹{(data.item.product.discountPrice || data.item.product.price).toFixed(2)}</p>
+                    {data.item.product.discountPrice && (
                       <p className="text-xs line-through text-gray-500 dark:text-gray-400">
-                        ₹{item.product.price.toFixed(2)}
+                        ₹{data.item.product.price.toFixed(2)}
                       </p>
                     )}
                   </div>
                 </motion.div>
-              ))}
             </AnimatePresence>
           </div>
 

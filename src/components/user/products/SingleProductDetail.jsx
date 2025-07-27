@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { FiStar, FiShoppingCart, FiChevronLeft, FiChevronRight, FiHeart, FiExternalLink } from 'react-icons/fi'
 import { motion } from 'framer-motion'
 import { useAddRemoveFromCartMutation, useGetUserProductBySlugQuery, useToggleWishlistMutation } from '@/redux/api/user'
@@ -8,12 +8,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addToCart, setIsLoginDialog, toggleWishlistItem } from '@/redux/slicer/auth'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa'
 
 function SingleProductDetail({ slug }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [selectedVariant, setSelectedVariant] = useState(null)
+  const reviewsSectionRef = useRef(null)
 
   const { isUser, wishlist, cart } = useSelector(state => state.auth);
   const dispatch = useDispatch();
@@ -24,7 +26,7 @@ function SingleProductDetail({ slug }) {
 
   const router = useRouter();
 
-  const product = data?.data;
+  const product = data?.data?.product;
 
   useEffect(() => {
     setIsWishlisted(wishlist?.includes(product?._id) ?? false);
@@ -79,6 +81,28 @@ function SingleProductDetail({ slug }) {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  const scrollToReviews = () => {
+    reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const renderRatingStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    for (let i = 1; i <= 5; i++) {
+      if (i <= fullStars) {
+        stars.push(<FaStar key={i} className="text-yellow-400 w-5 h-5" />);
+      } else if (i === fullStars + 1 && hasHalfStar) {
+        stars.push(<FaStarHalfAlt key={i} className="text-yellow-400 w-5 h-5" />);
+      } else {
+        stars.push(<FaRegStar key={i} className="text-yellow-400 w-5 h-5" />);
+      }
+    }
+    
+    return stars;
   }
 
   if (isLoading) {
@@ -215,12 +239,15 @@ function SingleProductDetail({ slug }) {
             )}
 
             <div className="flex items-center mt-4">
-              <div className="flex text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <FiStar key={i} fill={i < 4 ? "currentColor" : "none"} className="w-5 h-5" />
-                ))}
-              </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">(24 reviews)</span>
+              <button 
+                onClick={scrollToReviews}
+                className="flex items-center cursor-pointer gap-1 hover:opacity-80 transition-opacity"
+              >
+                {renderRatingStars(parseFloat(data?.data?.rating || 0))}
+                <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                  ({data?.data?.reviews?.length || 0} reviews)
+                </span>
+              </button>
               <span className="mx-2 text-gray-300 dark:text-gray-600">|</span>
               <span className="text-sm font-medium text-green-600 dark:text-green-400">
                 {displayProduct?.quantity > 0 ? 'In Stock' : 'Out of Stock'}
@@ -302,8 +329,6 @@ function SingleProductDetail({ slug }) {
             </motion.button>
           </div>
 
-
-
           {/* Product Meta */}
           <div className="pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -328,16 +353,114 @@ function SingleProductDetail({ slug }) {
             </div>
           </div>
         </div>
-
-        
       </div>
-                {/* Description */}
-          <div className="space-y-3">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Description</h3>
-            <div className="text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
-              {displayProduct?.description}
+
+      {/* Description & Reviews */}
+      <div className="mt-16 space-y-12">
+        {/* Description */}
+        <div className="space-y-6">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Product Details</h3>
+          <div className="text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
+            {displayProduct?.description}
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div ref={reviewsSectionRef} className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Reviews</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                {data?.data?.rating || '0.0'}
+              </span>
+              <div className="flex flex-col">
+                <div className="flex">
+                  {renderRatingStars(parseFloat(data?.data?.rating || 0))}
+                </div>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Based on {data?.data?.reviews?.length || 0} reviews
+                </span>
+              </div>
             </div>
           </div>
+
+          {data?.data?.reviews?.length > 0 ? (
+            <div className="grid gap-8">
+              {data?.data?.reviews.map((review) => (
+                <div key={review._id} className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-0">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                      {review.user?.imgUrl ? (
+                        <Image
+                          src={review.user.imgUrl}
+                          alt={review.user.name}
+                          width={48}
+                          height={48}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-full text-gray-500 dark:text-gray-400">
+                          {review.user?.name?.charAt(0) || 'U'}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium text-gray-900 dark:text-white">{review.user?.name || 'Anonymous'}</h4>
+                        <div className="flex text-yellow-400">
+                          {[...Array(5)].map((_, i) => (
+                            <FaStar 
+                              key={i} 
+                              className="w-4 h-4" 
+                              fill={i < review.rating ? "currentColor" : "none"}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {new Date(review.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                      <p className="mt-2 text-gray-700 dark:text-gray-300">{review.review}</p>
+                      
+                      {review.images?.length > 0 && (
+                        <div className="flex gap-3 mt-4">
+                          {review.images.map((img, idx) => (
+                            <div key={idx} className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                              <Image
+                                src={img}
+                                alt={`Review image ${idx + 1}`}
+                                width={64}
+                                height={64}
+                                className="object-cover w-full h-full"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="w-24 h-24 mx-auto bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
+                <FiStar className="text-gray-400 w-12 h-12" />
+              </div>
+              <h4 className="text-xl font-medium text-gray-700 dark:text-gray-300 mb-2">
+                No reviews yet
+              </h4>
+              <p className="text-gray-500 dark:text-gray-400">
+                Be the first to review this product
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </motion.div>
   )
 }

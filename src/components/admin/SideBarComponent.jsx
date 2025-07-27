@@ -26,8 +26,8 @@ const navItems = [
   { name: 'Categories', href: '/admin/categories', icon: Tag },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },
   { name: 'Images', href: '/admin/images', icon: Image },
-  { name: 'Reports', href: '/admin/reports', icon: BarChart2 },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+  // { name: 'Reports', href: '/admin/reports', icon: BarChart2 },
+  // { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -39,6 +39,9 @@ export default function Sidebar() {
       useEffect(() => {
       setIsLoading(false)
       }, [])
+
+    // console.log('running')
+
 
   function handleClose() {
   if (typeof window !== 'undefined') {

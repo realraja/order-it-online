@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: fetchBaseQuery({ baseUrl: "/api/admin" }),
-  tagTypes: ["Users", "Category", "Image", "Product","Dashbord","Order"],
+  tagTypes: ["Users", "Category", "Image", "Product", "Dashbord", "Order","Review"],
   endpoints: (builder) => ({
     getDashbordData: builder.query({
       query: () => ({
@@ -26,7 +26,7 @@ const adminApi = createApi({
         method: "DELETE",
         credentials: "include",
       }),
-      invalidatesTags: ["Users","Dashbord"],
+      invalidatesTags: ["Users", "Dashbord"],
     }),
 
     getCategory: builder.query({
@@ -43,7 +43,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Category","Dashbord"],
+      invalidatesTags: ["Category", "Dashbord"],
     }),
     updateCategory: builder.mutation({
       query: (data) => ({
@@ -52,7 +52,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Category","Dashbord"],
+      invalidatesTags: ["Category", "Dashbord"],
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
@@ -61,7 +61,7 @@ const adminApi = createApi({
         credentials: "include",
         body: id,
       }),
-      invalidatesTags: ["Category","Dashbord"],
+      invalidatesTags: ["Category", "Dashbord"],
     }),
 
     getImage: builder.query({
@@ -78,7 +78,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Image","Dashbord"],
+      invalidatesTags: ["Image", "Dashbord"],
     }),
     updateImage: builder.mutation({
       query: (data) => ({
@@ -96,7 +96,7 @@ const adminApi = createApi({
         credentials: "include",
         body: id,
       }),
-      invalidatesTags: ["Image","Dashbord"],
+      invalidatesTags: ["Image", "Dashbord"],
     }),
 
     getProduct: builder.query({
@@ -113,7 +113,7 @@ const adminApi = createApi({
         credentials: "include",
         body: data,
       }),
-      invalidatesTags: ["Product","Dashbord"],
+      invalidatesTags: ["Product", "Dashbord"],
     }),
     updateProduct: builder.mutation({
       query: (data) => ({
@@ -131,10 +131,8 @@ const adminApi = createApi({
         credentials: "include",
         body: id,
       }),
-      invalidatesTags: ["Product","Dashbord"],
+      invalidatesTags: ["Product", "Dashbord"],
     }),
-
-
 
     getOrder: builder.query({
       query: () => ({
@@ -159,7 +157,24 @@ const adminApi = createApi({
         credentials: "include",
         body: id,
       }),
-      invalidatesTags: ["Order","Dashbord"],
+      invalidatesTags: ["Order", "Dashbord"],
+    }),
+
+    getReview: builder.query({
+      query: () => ({
+        url: "/review",
+        credentials: "include",
+      }),
+      providesTags: ["Review"],
+    }),
+    updateReview: builder.mutation({
+      query: (data) => ({
+        url: "/review",
+        method: "PUT",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Review"],
     }),
   }),
 });
@@ -167,8 +182,6 @@ const adminApi = createApi({
 export const {
   useGetDashbordDataQuery,
 
-
-  
   useGetUserDataQuery,
   useDeleteUserMutation,
 
@@ -187,9 +200,12 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
 
-
   useGetOrderQuery,
   useUpdateOrderMutation,
   useDeleteOrderMutation,
+
+
+  useGetReviewQuery,
+  useUpdateReviewMutation,
 } = adminApi;
 export default adminApi;

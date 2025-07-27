@@ -7,8 +7,7 @@ const schema = new Schema(
       ref: "User",
       required: [true, "Order must belong to a user"],
     },
-    items: [
-      {
+    item: {
         product: {
           type: mongoose.Schema.ObjectId,
           ref: "Product",
@@ -20,7 +19,11 @@ const schema = new Schema(
           min: [1, "Quantity must be at least 1"],
         }
       },
-    ],
+    review:{
+      type: mongoose.Schema.ObjectId,
+      ref: "Review",
+    },
+    
     shippingAddress: {
       name:String,
       phone:String,

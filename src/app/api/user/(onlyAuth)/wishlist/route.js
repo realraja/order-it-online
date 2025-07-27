@@ -1,18 +1,28 @@
 import { failedResponse, ResponseSuccess } from "@/middleware/response";
 import { UserTryCatch } from "@/middleware/TryCatch";
+import Review from "@/model/review";
 import User from "@/model/user";
 
 export const GET = UserTryCatch(async (req) => {
 
   await req.user.populate('wishlist');
 
-  const wishlist = req.user.wishlist.map((p) => {
-    return ({
-      ...p.toObject(),rating:3.7
-    })
-  })
+    const productWithRating = await Promise.all(
+    req.user.wishlist.map(async (product) => {
+      const reviews = await Review.find({ product: product._id ,status:'approved'});
+      const totalRating = reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+      const ratingCount = reviews.length;
+      const averageRating = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : "0.0";
 
-  return ResponseSuccess("Wishlist get successfully!", wishlist);
+      return {
+        ...product?.toObject(),
+        rating: averageRating,
+        ratingCount,
+      };
+    })
+  );
+
+  return ResponseSuccess("Wishlist get successfully!", productWithRating);
 });
 
 
