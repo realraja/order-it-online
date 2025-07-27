@@ -6,9 +6,11 @@ const adminTryCatch = (passedFunction) => async (data) => {
     return await passedFunction(data);
   } catch (error) {
     console.log(error)
-    return toast.error(
+    toast.error(
       error.response?.data.message ? error.response.data.message : error.message
     );
+
+    return error.response?.data
   }
 };
 

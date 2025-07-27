@@ -26,10 +26,13 @@ export default function LoginPage() {
         setError('');
 
         try {
-           await LoginAdmin({password});
+           const data = await LoginAdmin({password});
             // console.log(data);
-            dispatch(login());
-            router.push('/admin');
+
+            if(data.success){
+                dispatch(login());
+                router.push('/admin');
+            }
         } catch (err) {
             setError('An error occurred. Please try again.');
         } finally {

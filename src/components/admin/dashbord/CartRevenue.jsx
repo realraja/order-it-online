@@ -11,22 +11,22 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const dataLocal = [
-  { name: 'Jan', revenue: 4000 },
-  { name: 'Feb', revenue: 3000 },
-  { name: 'Mar', revenue: 5000 },
-  { name: 'Apr', revenue: 2780 },
-  { name: 'May', revenue: 1890 },
-  { name: 'Jun', revenue: 2390 },
-  { name: 'Jul', revenue: 3490 },
-  { name: 'Aug', revenue: 4000 },
-  { name: 'Sep', revenue: 5000 },
-  { name: 'Oct', revenue: 6000 },
-  { name: 'Nov', revenue: 7000 },
-  { name: 'Dec', revenue: 8000 },
-];
+// const dataLocal = [
+//   { name: 'Jan', revenue: 4000 },
+//   { name: 'Feb', revenue: 3000 },
+//   { name: 'Mar', revenue: 5000 },
+//   { name: 'Apr', revenue: 2780 },
+//   { name: 'May', revenue: 1890 },
+//   { name: 'Jun', revenue: 2390 },
+//   { name: 'Jul', revenue: 3490 },
+//   { name: 'Aug', revenue: 4000 },
+//   { name: 'Sep', revenue: 5000 },
+//   { name: 'Oct', revenue: 6000 },
+//   { name: 'Nov', revenue: 7000 },
+//   { name: 'Dec', revenue: 8000 },
+// ];
 
-export default function ChartRevenue({data = dataLocal}) {
+export default function ChartRevenue({data }) {
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">

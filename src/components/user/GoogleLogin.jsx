@@ -7,13 +7,16 @@ import { BeatLoader } from 'react-spinners';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '@/redux/slicer/auth';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function GoogleSignIn() {
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
     const {cart} = useSelector(state => state.auth)
     const router = useRouter();
+    const pathname = usePathname();
+
+    // console.log(pathname)
 
     const handleSuccess = async (credentialResponse) => {
         try {
@@ -26,7 +29,7 @@ export default function GoogleSignIn() {
 
             if(data){
                 await dispatch(login(data));
-                router.push('/');
+                if(pathname === '/register') return router.push('/');
             }
 
         } catch (error) {

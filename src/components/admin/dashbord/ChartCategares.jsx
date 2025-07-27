@@ -1,17 +1,17 @@
 'use client'
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const dataLocal = [
-  { name: 'Electronics', value: 400 },
-  { name: 'Clothing', value: 300 },
-  { name: 'Home & Kitchen', value: 300 },
-  { name: 'Books', value: 200 },
-  { name: 'Other', value: 100 },
-];
+// const dataLocal = [
+//   { name: 'Electronics', value: 400 },
+//   { name: 'Clothing', value: 300 },
+//   { name: 'Home & Kitchen', value: 300 },
+//   { name: 'Books', value: 200 },
+//   { name: 'Other', value: 100 },
+// ];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8','#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-export default function ChartCategories({data = dataLocal}) {
+export default function ChartCategories({data}) {
   return (
     <div className="h-80">
       <ResponsiveContainer width="100%" height="100%">
