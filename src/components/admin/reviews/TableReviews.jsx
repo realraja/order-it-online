@@ -17,14 +17,18 @@ export default function TableReviews() {
 
   const reviews = data?.data || [];
 
+console.log(data)
+
   const filteredReviews = reviews.filter((review) => {
     if (ratingFilter !== 'all' && review.rating !== parseInt(ratingFilter)) return false;
     return (
-      review.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.product?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.review.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+    console.log(filteredReviews);
 
   const handleUpdateStatus = async (id, status) => {
     await UpdateReviewStatus({id, status});
@@ -160,15 +164,15 @@ export default function TableReviews() {
                     <div className="flex-shrink-0 h-10 w-10">
                       <Image height={50} width={50} 
                         className="h-10 w-10 rounded-md object-cover" 
-                        src={review.product.imageCover || review.images[0]} 
-                        alt={review.product.name} 
+                        src={review.product?.imageCover || review.images[0]} 
+                        alt={review.product?.name || 'Product Image'} 
                       />
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {review.product.name.length > 20 
-                          ? `${review.product.name.substring(0, 20)}...` 
-                          : review.product.name}
+                        {review.product?.name.length > 20 
+                          ? `${review.product?.name.substring(0, 20)}...` 
+                          : review.product?.name}
                       </div>
                     </div>
                   </div>
@@ -179,7 +183,7 @@ export default function TableReviews() {
                       <Image height={50} width={50} 
                         className="h-10 w-10 rounded-full" 
                         src={review.user.imgUrl} 
-                        alt={review.user.name} 
+                        alt={review.user.name || 'User Image'} 
                       />
                     </div>
                     <div className="ml-4">

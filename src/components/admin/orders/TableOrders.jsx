@@ -28,7 +28,7 @@ export default function TableOrders() {
   const filteredOrders = orders.filter((order) => {
     if (statusFilter !== 'all' && order.orderStatus !== statusFilter) return false;
     return (
-      order.item.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.item.product?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
@@ -43,7 +43,7 @@ export default function TableOrders() {
 
   const paymentStatusOptions = [
     { value: 'pending', label: 'Pending', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' },
-    { value: 'paid', label: 'Paid', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
+    { value: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
     { value: 'failed', label: 'Failed', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' },
     { value: 'refunded', label: 'Refunded', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' }
   ];
@@ -168,13 +168,13 @@ export default function TableOrders() {
                 <td className="whitespace-nowrap px-6 py-4 ">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
-                      <Image height={50} width={50} className="h-10 w-10 rounded-full" src={order.item.product.imageCover} alt={order.user.name} />
+                      <Image height={50} width={50} className="h-10 w-10 rounded-full" src={order.item.product?.imageCover} alt={order.user.name} />
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
-                    {order.item.product.name.length > 20 
-                      ? `${order.item.product.name.substring(0, 20)}...` 
-                      : order.item.product.name}
+                    {order.item.product?.name.length > 20 
+                      ? `${order.item.product?.name.substring(0, 20)}...` 
+                      : order.item.product?.name}
                   </div>
                       <div className="text-sm text-gray-500 dark:text-gray-300">₹{order.totalAmount} × {order.item.quantity}</div>
                     </div>
