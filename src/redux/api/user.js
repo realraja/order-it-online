@@ -198,5 +198,10 @@ export const {
   useAddReviewMutation,
 
   useGetNotificationsQuery,
+
+  util:{getRunningQueriesThunk }
 } = userApi;
 export default userApi;
+
+
+export const { getUserCategory } = userApi.endpoints;

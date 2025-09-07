@@ -1,6 +1,15 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const userTryCatchServer = (passedFunction) => async (data) => {
+  try {
+    return await passedFunction(data);
+  } catch (error) {
+    console.log(error,error.message);
+    return error
+    // return {success:false,message:error.response?.data.message ? error.response.data.message:error.message,data:error.response?.data.data ? error.response.data.data:null};
+  }
+};
 const userTryCatch = (passedFunction) => async (data) => {
   try {
     return await passedFunction(data);
@@ -73,11 +82,18 @@ export const logoutUser = userTryCatch(async () => {
   return data;
 });
 
-
-
 export const SendNotificationToAdmin = userTryCatch(async (userData = {}) => {
   const { data } = await axios.post("/api/user/notification", userData);
   toast.success(
     data.message ? data.message : "Notification send successfully");
+  return data;
+});
+
+export const getCategories = userTryCatchServer(async () => {
+  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories");
+  return data;
+});
+export const getProducts = userTryCatchServer(async () => {
+  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/products");
   return data;
 });

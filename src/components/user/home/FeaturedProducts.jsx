@@ -2,16 +2,16 @@
 import { useGetUserProductQuery } from "@/redux/api/user";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {  FiStar, FiClock, FiTruck, FiArrowRight } from "react-icons/fi";
+import { FiStar, FiClock, FiTruck, FiArrowRight } from "react-icons/fi";
 import ProductCard from "../ProductCard";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const FeaturedProducts = () => {
+const FeaturedProducts = ({initialData}) => {
   const [products, setProducts] = useState([]);
-  const [visibleProducts, setVisibleProducts] = useState(8);
-  const { data, isLoading } = useGetUserProductQuery();
+  const { data = initialData, isLoading } = useGetUserProductQuery(undefined, {
+    skip: !!initialData,
+  });
 
-  const router = useRouter();
 
   useEffect(() => {
     if (data) {
@@ -24,11 +24,6 @@ const FeaturedProducts = () => {
 
 
 
-
-  const loadMoreProducts = () => {
-    // setVisibleProducts(prev => prev + 4);
-    router.push('/products')
-  };
 
   // Loading skeleton
 
@@ -73,26 +68,23 @@ const FeaturedProducts = () => {
           </motion.div>
 
 
-          <ProductCard products={products?.slice(0, visibleProducts)} isLoading={isLoading} />
+          <ProductCard products={products?.slice(0, 8)} isLoading={isLoading} />
 
-          {visibleProducts < products.length && (
-                <motion.div
-                  className="text-center mt-12"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <motion.button
-                    onClick={loadMoreProducts}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Show More Products
-                    <FiArrowRight className="ml-3 -mr-1 w-5 h-5" />
-                  </motion.button>
-                </motion.div>
-              )}
+          {8 < products.length && (
+            <motion.div
+              className="text-center mt-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Link href={'/products'}
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Show More Products
+                <FiArrowRight className="ml-3 -mr-1 w-5 h-5" />
+              </Link>
+            </motion.div>
+          )}
 
         </div>
       </section>

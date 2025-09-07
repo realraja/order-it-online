@@ -1,8 +1,7 @@
-import { AdminSidebar, GetLocalStorage } from "@/utils/localStorage";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isSidebarOpen:  GetLocalStorage({key:AdminSidebar}) || false,
+  isSidebarOpen:  false,
   isAdmin: false,
   isLoading:true,
 };

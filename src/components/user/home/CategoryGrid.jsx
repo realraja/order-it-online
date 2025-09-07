@@ -5,19 +5,23 @@ import { useGetUserCategoryQuery } from '@/redux/api/user';
 import { FiChevronRight } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 
-export default function CategoriesGrid({showAll = false}) {
+export default function CategoriesGrid({ showAll = false, initialData }) {
   const [showAllCategories, setShowAllCategories] = useState(showAll);
-  const { data, isLoading, isError } = useGetUserCategoryQuery();
   const router = useRouter();
 
+  // const { data, isLoading, isError } = useGetUserCategoryQuery();
+  const { data = initialData, isLoading, isError } = useGetUserCategoryQuery(undefined, {
+    skip: !!initialData,
+  });
+
   // Get categories to display
-  const categoriesToShow = showAllCategories 
-    ? data?.data || [] 
+  const categoriesToShow = showAllCategories
+    ? data?.data || []
     : data?.data?.slice(0, 5) || [];
 
-    const handleCategoryClicked = (slug) => {
-      router.push(`/category/${slug}`);
-    }
+  const handleCategoryClicked = (slug) => {
+    router.push(`/category/${slug}`);
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -25,7 +29,7 @@ export default function CategoriesGrid({showAll = false}) {
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-gray-900 dark:text-white">
           Shop by Category
         </h2>
-        
+
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
             {[...Array(6)].map((_, index) => (
@@ -41,7 +45,7 @@ export default function CategoriesGrid({showAll = false}) {
             {/* Display categories with simple hover animation */}
             {categoriesToShow.map((category) => (
               <motion.div
-              onClick={()=> handleCategoryClicked(category.slug)}
+                onClick={() => handleCategoryClicked(category.slug)}
                 key={category._id}
                 whileHover={{ scale: 1.05 }}
                 className="relative overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer group"

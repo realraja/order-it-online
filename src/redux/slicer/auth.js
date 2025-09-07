@@ -1,4 +1,3 @@
-import { CartStorageKey, GetLocalStorage } from "@/utils/localStorage";
 import { createSlice } from "@reduxjs/toolkit";
 
 const authSlicer = createSlice({
@@ -10,7 +9,7 @@ const authSlicer = createSlice({
     loading: true,
     isAdmin: false,
     isLoginDialog: false,
-    cart: GetLocalStorage({key:CartStorageKey}) || [], // [{ product, quantity }]
+    cart: [], // [{ product, quantity }]
     wishlist: [],
     addresses: [],
   },
@@ -64,6 +63,10 @@ const authSlicer = createSlice({
     clearCart: (state, action) => {
       state.cart = [];
     },
+    setToCart: (state, action) => {
+      state.cart = action.payload;
+    },
+    
 
     // Remove item from cart entirely
     deleteFromCart: (state, action) => {
@@ -87,6 +90,7 @@ export const {
   decreaseCartItem,
   deleteFromCart,
   setAddresses,
+  setToCart,
 clearCart
 } = authSlicer.actions;
 

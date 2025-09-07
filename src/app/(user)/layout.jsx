@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
       <Navbar />
       <CheckUser />
       {children}
-<Script
+      <Script
         type="text/javascript"
         src="https://checkout.razorpay.com/v1/checkout.js"
       />
