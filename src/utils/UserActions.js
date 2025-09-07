@@ -90,10 +90,22 @@ export const SendNotificationToAdmin = userTryCatch(async (userData = {}) => {
 });
 
 export const getCategories = userTryCatchServer(async () => {
-  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories");
+  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories",
+      {
+        // Important: disable Next.js fetch cache equivalent
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      });
   return data;
 });
 export const getProducts = userTryCatchServer(async () => {
-  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/products");
+  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/products",
+      {
+        // Important: disable Next.js fetch cache equivalent
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      });
   return data;
 });
