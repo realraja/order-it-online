@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import CategoryGrid from "@/components/user/home/CategoryGrid";
 import FeaturedProducts from "@/components/user/home/FeaturedProducts";
 import HeroSection from "@/components/user/home/heroSection";

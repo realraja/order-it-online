@@ -90,17 +90,15 @@ export const SendNotificationToAdmin = userTryCatch(async (userData = {}) => {
 });
 
 export const getCategories = userTryCatchServer(async () => {
-  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories",
-      {
-        params:{t: new Date().getDate()}
-      });
+  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories");
   return data;
 });
 export const getProducts = userTryCatchServer(async () => {
-  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/products",
-      {
-        params:{t: new Date().getDate()}
-      });
+  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/products");
   return data;
 });
 
+
+const params = {
+        params:{t: new Date().getDate()}
+      };
