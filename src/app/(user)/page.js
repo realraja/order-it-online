@@ -1,4 +1,5 @@
 // export const dynamic = "force-dynamic";
+export const revalidate = 60; // revalidate every 60 seconds
 
 import CategoryGrid from "@/components/user/home/CategoryGrid";
 import FeaturedProducts from "@/components/user/home/FeaturedProducts";

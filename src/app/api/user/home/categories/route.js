@@ -18,5 +18,6 @@ export const GET = SimpleTryCatch(async (req) => {
     })
   );
 
+  // return ResponseSuccess("Categories fetched successfully!", categoriesWithCounts,200,null,{"Cache-Control":"no-store,max-age=0"});
   return ResponseSuccess("Categories fetched successfully!", categoriesWithCounts);
 });

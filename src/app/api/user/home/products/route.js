@@ -23,4 +23,5 @@ export const GET = SimpleTryCatch(async (req) => {
   );
 
   return ResponseSuccess("All Products Fetched successfully!", productWithRating);
+  // return ResponseSuccess("All Products Fetched successfully!", productWithRating,200,null,{"Cache-Control":"no-store,max-age=0"});
 });

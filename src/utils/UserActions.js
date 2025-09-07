@@ -89,13 +89,26 @@ export const SendNotificationToAdmin = userTryCatch(async (userData = {}) => {
   return data;
 });
 
+// export const getCategories = userTryCatchServer(async () => {
+//   const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories");
+//   return data;
+// });
+// export const getProducts = userTryCatchServer(async () => {
+//   const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/products");
+//   return data;
+// });
+
 export const getCategories = userTryCatchServer(async () => {
-  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories");
-  return data;
+  const res = await fetch(process.env.NEXT_PUBLIC_URL+"/api/user/home/categories",{next:{revalidate:60}});
+  if (!res.ok) throw new Error("Failed to fetch categories");
+
+  return res.json();
 });
 export const getProducts = userTryCatchServer(async () => {
-  const { data } = await axios.get(process.env.NEXT_PUBLIC_URL+"/api/user/home/products");
-  return data;
+  const res = await fetch(process.env.NEXT_PUBLIC_URL+"/api/user/home/products",{next:{revalidate:60}});
+  if (!res.ok) throw new Error("Failed to fetch categories");
+
+  return res.json();
 });
 
 
