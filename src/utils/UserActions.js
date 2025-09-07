@@ -99,6 +99,6 @@ export const getProducts = userTryCatchServer(async () => {
 });
 
 
-const params = {
+export const axiosParams = {
         params:{t: new Date().getDate()}
       };
